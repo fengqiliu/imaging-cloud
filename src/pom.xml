@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.dsite</groupId>
+    <artifactId>medical-cloud-film</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>medical-cloud-film</name>
+    <description>D-Site 云胶片管理系统</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Spring Boot 版本 -->
+        <spring-boot.version>3.2.1</spring-boot.version>
+
+        <!-- 若依版本 -->
+        <ruoyi.version>3.8.6</ruoyi.version>
+
+        <!-- 数据库 -->
+        <mssql.version>12.6.1.jre11</mssql.version>
+
+        <!-- MyBatis Plus -->
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
+
+        <!-- JWT -->
+        <jjwt.version>0.12.3</jjwt.version>
+
+        <!-- DICOM -->
+        <dcm4che.version>5.33.0</dcm4che.version>
+
+        <!-- PDF -->
+        <itext.version>7.2.5</itext.version>
+
+        <!-- MinIO -->
+        <minio.version>8.5.9</minio.version>
+
+        <!-- Lombok -->
+        <lombok.version>1.18.30</lombok.version>
+
+        <!-- Hutool -->
+        <hutool.version>5.8.24</hutool.version>
+
+        <!-- Apache Commons -->
+        <commons-io.version>2.15.1</commons-io.version>
+        <commons-fileupload.version>1.5</commons-fileupload.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+
+        <!-- Swagger -->
+        <springdoc.version>2.3.0</springdoc.version>
+
+        <!-- Maven 插件版本 -->
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+    </properties>
+
+    <modules>
+        <module>medical-admin</module>
+        <module>medical-framework</module>
+        <module>medical-common</module>
+        <module>medical-system</module>
+    </modules>
+
+    <!-- 依赖版本管理 -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot 依赖 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- SQL Server -->
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${mssql.version}</version>
+            </dependency>
+
+            <!-- MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- JWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- DICOM -->
+            <dependency>
+                <groupId>org.dcm4che</groupId>
+                <artifactId>dcm4che-core</artifactId>
+                <version>${dcm4che.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dcm4che</groupId>
+                <artifactId>dcm4che-image</artifactId>
+                <version>${dcm4che.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dcm4che</groupId>
+                <artifactId>dcm4che-tool-common</artifactId>
+                <version>${dcm4che.version}</version>
+            </dependency>
+
+            <!-- PDF -->
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext7-core</artifactId>
+                <version>${itext.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <!-- MinIO -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- Hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- Apache Commons -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <!-- Swagger -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
+            <!-- 项目内部模块 -->
+            <dependency>
+                <groupId>com.dsite</groupId>
+                <artifactId>medical-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dsite</groupId>
+                <artifactId>medical-framework</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dsite</groupId>
+                <artifactId>medical-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>aliyun</id>
+            <name>Aliyun Maven Repository</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>aliyun-plugin</id>
+            <name>Aliyun Maven Plugin Repository</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
