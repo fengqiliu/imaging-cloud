@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dsite.medical.cloudfilm.mapper.CfDiagnosisReportMapper">
+
+    <resultMap id="CfDiagnosisReportResult" type="com.dsite.medical.cloudfilm.domain.entity.CfDiagnosisReport">
+        <id property="reportId" column="report_id"/>
+        <result property="examId" column="exam_id"/>
+        <result property="patientId" column="patient_id"/>
+        <result property="clinicalData" column="clinical_data"/>
+        <result property="examFindings" column="exam_findings"/>
+        <result property="diagnosis" column="diagnosis"/>
+        <result property="reportStatus" column="report_status"/>
+        <result property="createDoctor" column="create_doctor"/>
+        <result property="reviewDoctor" column="review_doctor"/>
+        <result property="createTime" column="create_time"/>
+        <result property="reviewTime" column="review_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <select id="selectReportByExamId" resultMap="CfDiagnosisReportResult">
+        SELECT * FROM cf_diagnosis_report
+        WHERE exam_id = #{examId} AND del_flag = '0'
+    </select>
+
+</mapper>
