@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运营统计 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+    </style>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-x-ray"></i></div><span class="sidebar-title">D-Site</span></div>
+            <div class="sidebar-menu">
+                <a class="menu-item" href="dashboard.html"><i class="fas fa-th-large"></i><span>仪表盘</span></a>
+                <div class="menu-section">云胶片业务</div>
+                <a class="menu-item" href="patients.html"><i class="fas fa-users"></i><span>患者管理</span></a>
+                <a class="menu-item" href="examinations.html"><i class="fas fa-clipboard-list"></i><span>检查管理</span><span class="badge">5</span></a>
+                <a class="menu-item" href="images.html"><i class="fas fa-images"></i><span>影像管理</span></a>
+                <a class="menu-item" href="image-viewer.html"><i class="fas fa-eye"></i><span>DICOM阅片</span></a>
+                <a class="menu-item" href="reports.html"><i class="fas fa-file-medical"></i><span>诊断报告</span></a>
+                <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
+                <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
+                <a class="menu-item active" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">系统管理</div>
+                <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
+                <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
+                <a class="menu-item" href="depts.html"><i class="fas fa-hospital"></i><span>院区管理</span></a>
+                <a class="menu-item" href="dict.html"><i class="fas fa-book"></i><span>字典管理</span></a>
+                <a class="menu-item" href="logs.html"><i class="fas fa-history"></i><span>日志管理</span></a>
+                <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left"><div class="breadcrumb"><span>首页</span><i class="fas fa-chevron-right" style="font-size: 10px;"></i><span>运营统计</span></div></div>
+                <div class="header-right">
+                    <div class="header-icon"><i class="fas fa-bell"></i><span class="count"></span></div>
+                    <div class="header-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="user-dropdown">
+                        <div class="user-info" id="userDropdown">
+                            <div class="user-avatar">A</div>
+                            <div class="user-detail">
+                                <span class="user-name">管理员</span>
+                                <span class="user-role">超级管理员</span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="user-dropdown-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>个人中心</span></div>
+                            <div class="user-dropdown-item" onclick="showToast('修改密码开发中...', 'info')"><i class="fas fa-key"></i><span>修改密码</span></div>
+                            <div class="user-dropdown-divider"></div>
+                            <div class="user-dropdown-item danger" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i><span>退出登录</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="page-header"><h1 class="page-title">运营统计</h1><p class="page-desc">系统运营数据分析</p></div>
+                <div class="stats-grid">
+                    <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-value">1,286</div><div class="stat-label">累计患者</div><div class="stat-trend up"><i class="fas fa-arrow-up"></i> 12.5%</div></div>
+                    <div class="stat-card green"><div class="stat-icon"><i class="fas fa-clipboard-check"></i></div><div class="stat-value">8,456</div><div class="stat-label">累计检查</div><div class="stat-trend up"><i class="fas fa-arrow-up"></i> 8.3%</div></div>
+                    <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-file-medical"></i></div><div class="stat-value">7,892</div><div class="stat-label">累计报告</div><div class="stat-trend up"><i class="fas fa-arrow-up"></i> 15.2%</div></div>
+                    <div class="stat-card red"><div class="stat-icon"><i class="fas fa-share-alt"></i></div><div class="stat-value">3,456</div><div class="stat-label">分享次数</div><div class="stat-trend up"><i class="fas fa-arrow-up"></i> 23.1%</div></div>
+                </div>
+                <div class="chart-grid" style="grid-template-columns: 2fr 1fr 1fr;">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <div class="card-title"><i class="fas fa-chart-line"></i> 检查数量趋势</div>
+                            <div style="display: flex; gap: 8px;"><select class="select"><option>近7天</option><option selected>近30天</option><option>近3个月</option></select></div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px dashed var(--border-color);">
+                                <div style="text-align: center;"><div style="font-size: 32px; font-weight: 600; color: var(--primary-color);">256</div><div style="font-size: 13px; color: var(--text-secondary);">本月检查</div></div>
+                                <div style="text-align: center;"><div style="font-size: 32px; font-weight: 600; color: var(--success-color);">8.3%</div><div style="font-size: 13px; color: var(--text-secondary);">环比增长</div></div>
+                                <div style="text-align: center;"><div style="font-size: 32px; font-weight: 600; color: var(--warning-color);">15.2%</div><div style="font-size: 13px; color: var(--text-secondary);">同比增长</div></div>
+                            </div>
+                            <div class="chart-placeholder" style="height: 200px; margin-top: 20px;"><i class="fas fa-chart-area"></i><span>趋势图表区域</span></div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header"><div class="card-title"><i class="fas fa-pie-chart"></i> 检查类型分布</div></div>
+                        <div style="padding: 20px;">
+                            <div class="chart-placeholder" style="height: 180px; margin-bottom: 20px;"><i class="fas fa-chart-pie"></i><span>饼图区域</span></div>
+                            <div style="display: grid; gap: 8px;">
+                                <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; background: var(--primary-color); border-radius: 2px;"></span><span style="flex: 1; font-size: 13px;">CT</span><span style="font-weight: 600;">35%</span></div>
+                                <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; background: var(--success-color); border-radius: 2px;"></span><span style="flex: 1; font-size: 13px;">MRI</span><span style="font-weight: 600;">25%</span></div>
+                                <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; background: var(--warning-color); border-radius: 2px;"></span><span style="flex: 1; font-size: 13px;">DR</span><span style="font-weight: 600;">20%</span></div>
+                                <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; background: var(--danger-color); border-radius: 2px;"></span><span style="flex: 1; font-size: 13px;">超声</span><span style="font-weight: 600;">20%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header"><div class="card-title"><i class="fas fa-trophy"></i> TOP排行榜</div></div>
+                        <div style="padding: 20px;">
+                            <div class="rank-list">
+                                <div class="rank-item"><span class="rank-num" style="background: #ffd700;">1</span><span class="rank-name">王医生</span><span class="rank-value">156份报告</span></div>
+                                <div class="rank-item"><span class="rank-num" style="background: #c0c0c0;">2</span><span class="rank-name">李医生</span><span class="rank-value">142份报告</span></div>
+                                <div class="rank-item"><span class="rank-num" style="background: #cd7f32;">3</span><span class="rank-name">张医生</span><span class="rank-value">128份报告</span></div>
+                                <div class="rank-item"><span class="rank-num">4</span><span class="rank-name">赵医生</span><span class="rank-value">115份报告</span></div>
+                                <div class="rank-item"><span class="rank-num">5</span><span class="rank-name">刘医生</span><span class="rank-value">98份报告</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-table"></i> 详细数据</div>
+                        <div style="display: flex; gap: 12px;"><button class="btn btn-default"><i class="fas fa-download"></i> 导出Excel</button><button class="btn btn-default"><i class="fas fa-file-pdf"></i> 导出PDF</button></div>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>日期</th><th>新增患者</th><th>检查数量</th><th>报告数量</th><th>影像数量</th><th>分享次数</th><th>浏览次数</th></tr></thead>
+                        <tbody>
+                            <tr><td>2026-03-26</td><td>12</td><td>89</td><td>78</td><td>256</td><td>45</td><td>312</td></tr>
+                            <tr><td>2026-03-25</td><td>15</td><td>102</td><td>95</td><td>298</td><td>52</td><td>345</td></tr>
+                            <tr><td>2026-03-24</td><td>8</td><td>78</td><td>68</td><td>198</td><td>38</td><td>256</td></tr>
+                            <tr><td>2026-03-23</td><td>18</td><td>115</td><td>102</td><td>342</td><td>61</td><td>412</td></tr>
+                            <tr><td>2026-03-22</td><td>10</td><td>92</td><td>85</td><td>278</td><td>48</td><td>298</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- 退出确认弹窗 -->
+    <div id="logoutModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--danger-color);"><i class="fas fa-sign-out-alt"></i> 确认退出</h3>
+                <button class="icon-btn" onclick="closeLogoutModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p style="color: var(--text-secondary); margin-bottom: 8px;">确定要退出当前账号吗？</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-default" onclick="closeLogoutModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> 确认退出</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
+        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .chart-placeholder { transition: all 0.3s ease; cursor: pointer; }
+        .chart-placeholder:hover { background: var(--bg-color); }
+        .stat-card { transition: all 0.3s ease; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    </style>
+
+    <script>
+        // 统计数据
+        const statsData = {
+            '7days': { patients: 98, exams: 756, reports: 689, shares: 312, growth: { patients: 8.2, exams: 5.1, reports: 12.3, shares: 18.5 } },
+            '30days': { patients: 286, exams: 2456, reports: 2189, shares: 1234, growth: { patients: 12.5, exams: 8.3, reports: 15.2, shares: 23.1 } },
+            '90days': { patients: 856, exams: 7234, reports: 6521, shares: 3892, growth: { patients: 18.7, exams: 12.4, reports: 21.3, shares: 32.8 } },
+        };
+
+        let currentRange = '30days';
+
+        // 详细数据
+        const detailData = [
+            { date: '2026-03-26', patients: 12, exams: 89, reports: 78, images: 256, shares: 45, views: 312 },
+            { date: '2026-03-25', patients: 15, exams: 102, reports: 95, images: 298, shares: 52, views: 345 },
+            { date: '2026-03-24', patients: 8, exams: 78, reports: 68, images: 198, shares: 38, views: 256 },
+            { date: '2026-03-23', patients: 18, exams: 115, reports: 102, images: 342, shares: 61, views: 412 },
+            { date: '2026-03-22', patients: 10, exams: 92, reports: 85, images: 278, shares: 48, views: 298 },
+        ];
+
+        function updateStats() {
+            const data = statsData[currentRange];
+
+            // 更新统计卡片
+            const statCards = document.querySelectorAll('.stat-card');
+            const values = [data.patients, data.exams, data.reports, data.shares];
+            const growths = [data.growth.patients, data.growth.exams, data.growth.reports, data.growth.shares];
+
+            statCards.forEach((card, idx) => {
+                const valueEl = card.querySelector('.stat-value');
+                const trendEl = card.querySelector('.stat-trend');
+                if (valueEl) valueEl.textContent = values[idx].toLocaleString();
+                if (trendEl) {
+                    trendEl.innerHTML = `<i class="fas fa-arrow-up"></i> ${growths[idx]}%`;
+                    trendEl.className = 'stat-trend up';
+                }
+            });
+
+            // 更新趋势数据
+            const monthExams = document.querySelector('.chart-card:first-child .stat-value');
+            if (monthExams) monthExams.textContent = data.exams;
+        }
+
+        function changeTimeRange(range) {
+            currentRange = range;
+            updateStats();
+            showToast(`已切换到近${range === '7days' ? '7天' : range === '30days' ? '30天' : '3个月'}数据`, 'info');
+        }
+
+        function exportExcel() {
+            showToast('Excel导出功能开发中...', 'info');
+        }
+
+        function exportPDF() {
+            showToast('PDF导出功能开发中...', 'info');
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // 统计卡片点击
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const label = this.querySelector('.stat-label')?.textContent;
+                showToast(`${label}详细数据`, 'info');
+            });
+        });
+
+        // 时间范围选择
+        document.querySelectorAll('.chart-card:first-child .select').forEach(select => {
+            select.addEventListener('change', function() {
+                const rangeMap = { '近7天': '7days', '近30天': '30days', '近3个月': '90days' };
+                changeTimeRange(rangeMap[this.value]);
+            });
+        });
+
+        // 导出按钮
+        document.querySelectorAll('.btn').forEach(btn => {
+            if (btn.textContent.includes('导出Excel')) btn.addEventListener('click', exportExcel);
+            if (btn.textContent.includes('导出PDF')) btn.addEventListener('click', exportPDF);
+        });
+
+        // 图表占位符交互
+        document.querySelectorAll('.chart-placeholder').forEach(placeholder => {
+            placeholder.addEventListener('click', function() {
+                showToast('图表交互功能开发中...', 'info');
+            });
+        });
+
+        // 初始化
+        updateStats();
+
+        // 用户下拉菜单
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        userDropdown?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdownMenu.classList.toggle('show');
+        });
+        document.addEventListener('click', function() {
+            userDropdownMenu?.classList.remove('show');
+        });
+
+        // 退出登录
+        function openLogoutModal() {
+            userDropdownMenu?.classList.remove('show');
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        function confirmLogout() {
+            closeLogoutModal();
+            showToast('正在退出...', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 800);
+        }
+    </script>
+</body>
+</html>

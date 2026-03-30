@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+        }
+
+        .profile-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            padding: 32px;
+            text-align: center;
+        }
+
+        .profile-avatar-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: 500;
+        }
+
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+        }
+
+        .avatar-upload-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .profile-role {
+            font-size: 14px;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .profile-stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .profile-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .info-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .info-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-card-title i {
+            color: var(--primary-color);
+        }
+
+        .info-card-body {
+            padding: 24px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            padding: 10px 12px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-value i {
+            color: var(--text-secondary);
+            width: 16px;
+        }
+
+        .info-edit-btn {
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .info-edit-btn:hover {
+            color: var(--primary-light);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .form-label .required {
+            color: var(--danger-color);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .form-error {
+            font-size: 12px;
+            color: var(--danger-color);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-item.has-error .input {
+            border-color: var(--danger-color);
+        }
+
+        .form-item.has-error .form-error {
+            display: block;
+        }
+
+        .password-strength {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .strength-bar.active {
+            background: var(--danger-color);
+        }
+
+        .strength-bar.medium.active {
+            background: var(--warning-color);
+        }
+
+        .strength-bar.strong.active {
+            background: var(--success-color);
+        }
+
+        .strength-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .setting-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #dcdfe6;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.login {
+            background: #e6f7ff;
+            color: var(--primary-color);
+        }
+
+        .activity-icon.edit {
+            background: #f6ffed;
+            color: var(--success-color);
+        }
+
+        .activity-icon.upload {
+            background: #fffbe6;
+            color: var(--warning-color);
+        }
+
+        .activity-icon.report {
+            background: #f9f0ff;
+            color: #722ed1;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .activity-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 20px;
+            margin-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal { background: white; border-radius: 12px; padding: 24px; min-width: 400px; max-width: 500px; }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .modal-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
+        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
+        .toast.warning { background: #fffbe6; border: 1px solid #ffe58f; color: #faad14; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-x-ray"></i></div><span class="sidebar-title">D-Site</span></div>
+            <div class="sidebar-menu">
+                <a class="menu-item" href="dashboard.html"><i class="fas fa-th-large"></i><span>仪表盘</span></a>
+                <div class="menu-section">云胶片业务</div>
+                <a class="menu-item" href="patients.html"><i class="fas fa-users"></i><span>患者管理</span></a>
+                <a class="menu-item" href="examinations.html"><i class="fas fa-clipboard-list"></i><span>检查管理</span><span class="badge">5</span></a>
+                <a class="menu-item" href="images.html"><i class="fas fa-images"></i><span>影像管理</span></a>
+                <a class="menu-item" href="image-viewer.html"><i class="fas fa-eye"></i><span>DICOM阅片</span></a>
+                <a class="menu-item" href="reports.html"><i class="fas fa-file-medical"></i><span>诊断报告</span></a>
+                <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
+                <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
+                <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">系统管理</div>
+                <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
+                <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
+                <a class="menu-item" href="depts.html"><i class="fas fa-hospital"></i><span>院区管理</span></a>
+                <a class="menu-item" href="dict.html"><i class="fas fa-book"></i><span>字典管理</span></a>
+                <a class="menu-item" href="logs.html"><i class="fas fa-history"></i><span>日志管理</span></a>
+                <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left"><div class="breadcrumb"><span>首页</span><i class="fas fa-chevron-right" style="font-size: 10px;"></i><span>个人中心</span></div></div>
+                <div class="header-right">
+                    <div class="header-icon"><i class="fas fa-bell"></i><span class="count"></span></div>
+                    <div class="header-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="user-dropdown">
+                        <div class="user-info" id="userDropdown">
+                            <div class="user-avatar">A</div>
+                            <div class="user-detail">
+                                <span class="user-name">管理员</span>
+                                <span class="user-role">超级管理员</span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="user-dropdown-item active" onclick="showToast('当前页面', 'info')"><i class="fas fa-user"></i><span>个人中心</span></div>
+                            <div class="user-dropdown-item" onclick="openPasswordModal()"><i class="fas fa-key"></i><span>修改密码</span></div>
+                            <div class="user-dropdown-divider"></div>
+                            <div class="user-dropdown-item danger" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i><span>退出登录</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="page-header"><h1 class="page-title">个人中心</h1><p class="page-desc">管理您的个人信息和账户设置</p></div>
+
+                <div class="profile-layout">
+                    <div class="profile-sidebar">
+                        <div class="profile-card">
+                            <div class="profile-avatar-wrapper">
+                                <div class="profile-avatar">A</div>
+                                <div class="avatar-upload-btn" onclick="showToast('头像上传功能开发中...', 'info')">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                            </div>
+                            <div class="profile-name">管理员</div>
+                            <div class="profile-role">超级管理员</div>
+                            <div class="profile-stats">
+                                <div class="profile-stat">
+                                    <div class="profile-stat-value">128</div>
+                                    <div class="profile-stat-label">报告数</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <div class="profile-stat-value">56</div>
+                                    <div class="profile-stat-label">检查数</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <div class="profile-stat-value">15</div>
+                                    <div class="profile-stat-label">分享数</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <div class="info-card-title"><i class="fas fa-shield-alt"></i> 账户安全</div>
+                            </div>
+                            <div class="info-card-body">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">登录密码</div>
+                                        <div class="setting-desc">已设置</div>
+                                    </div>
+                                    <button class="btn btn-default btn-sm" onclick="openPasswordModal()">修改</button>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">两步验证</div>
+                                        <div class="setting-desc">未启用</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">登录设备管理</div>
+                                        <div class="setting-desc">3台设备</div>
+                                    </div>
+                                    <button class="btn btn-default btn-sm" onclick="showToast('设备管理功能开发中...', 'info')">管理</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-main">
+                        <div class="info-card" style="margin-bottom: 24px;">
+                            <div class="info-card-header">
+                                <div class="info-card-title"><i class="fas fa-user"></i> 基本信息</div>
+                                <button class="btn btn-default btn-sm" onclick="toggleEditMode('basic')"><i class="fas fa-edit"></i> 编辑</button>
+                            </div>
+                            <div class="info-card-body">
+                                <div class="info-grid" id="basicInfoView">
+                                    <div class="info-item">
+                                        <div class="info-label">用户账号</div>
+                                        <div class="info-value"><i class="fas fa-user"></i> admin</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">用户姓名</div>
+                                        <div class="info-value"><i class="fas fa-id-card"></i> 管理员</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">手机号码</div>
+                                        <div class="info-value"><i class="fas fa-phone"></i> 138****8888</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">电子邮箱</div>
+                                        <div class="info-value"><i class="fas fa-envelope"></i> admin@dsite.com</div>
+                                    </div>
+                                    <div class="info-item full-width">
+                                        <div class="info-label">所属部门</div>
+                                        <div class="info-value"><i class="fas fa-hospital"></i> 总院 - 放射科</div>
+                                    </div>
+                                </div>
+                                <div class="form-grid" id="basicInfoEdit" style="display: none;">
+                                    <div class="form-item">
+                                        <label class="form-label">用户姓名</label>
+                                        <input type="text" class="input" id="userName" value="管理员">
+                                        <div class="form-error">请输入用户姓名</div>
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="form-label">手机号码</label>
+                                        <input type="text" class="input" id="phone" value="13812348888">
+                                        <div class="form-hint">用于接收短信通知</div>
+                                        <div class="form-error">请输入正确的手机号码</div>
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="form-label">电子邮箱</label>
+                                        <input type="email" class="input" id="email" value="admin@dsite.com">
+                                        <div class="form-hint">用于接收邮件通知</div>
+                                        <div class="form-error">请输入正确的邮箱地址</div>
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="form-label">所属部门</label>
+                                        <select class="select" style="width: 100%;">
+                                            <option>总院 - 放射科</option>
+                                            <option>总院 - 内科</option>
+                                            <option>总院 - 外科</option>
+                                            <option>分院 - 放射科</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-item full-width">
+                                        <label class="form-label">个人简介</label>
+                                        <textarea class="input" rows="3" placeholder="请输入个人简介...">放射科主任医师，从事医学影像诊断工作20年。</textarea>
+                                    </div>
+                                    <div class="action-bar" style="grid-column: 1 / -1; margin-top: 0; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                                        <button class="btn btn-default" onclick="toggleEditMode('basic')">取消</button>
+                                        <button class="btn btn-primary" onclick="saveBasicInfo()"><i class="fas fa-save"></i> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-card" style="margin-bottom: 24px;">
+                            <div class="info-card-header">
+                                <div class="info-card-title"><i class="fas fa-bell"></i> 通知设置</div>
+                            </div>
+                            <div class="info-card-body">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">检查完成通知</div>
+                                        <div class="setting-desc">当您负责的检查完成时发送通知</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">报告审核通知</div>
+                                        <div class="setting-desc">当您的报告被审核时发送通知</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">系统公告</div>
+                                        <div class="setting-desc">接收系统重要公告和更新通知</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">邮件通知</div>
+                                        <div class="setting-desc">通过邮件接收通知</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-title">短信通知</div>
+                                        <div class="setting-desc">通过短信接收重要通知</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <div class="info-card-title"><i class="fas fa-history"></i> 近期活动</div>
+                            </div>
+                            <div class="info-card-body">
+                                <div class="activity-list">
+                                    <div class="activity-item">
+                                        <div class="activity-icon login"><i class="fas fa-sign-in-alt"></i></div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">登录系统</div>
+                                            <div class="activity-desc">从 192.168.1.100 登录</div>
+                                        </div>
+                                        <div class="activity-time">今天 09:15</div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon report"><i class="fas fa-file-medical"></i></div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">完成诊断报告</div>
+                                            <div class="activity-desc">为患者李娜完成 CT 报告</div>
+                                        </div>
+                                        <div class="activity-time">昨天 16:30</div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon upload"><i class="fas fa-cloud-upload-alt"></i></div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">上传影像</div>
+                                            <div class="activity-desc">上传检查 EX2026032605 的 DICOM 影像</div>
+                                        </div>
+                                        <div class="activity-time">昨天 14:22</div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon edit"><i class="fas fa-edit"></i></div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">编辑患者信息</div>
+                                            <div class="activity-desc">修改患者王建国的基本信息</div>
+                                        </div>
+                                        <div class="activity-time">03-26 10:35</div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon report"><i class="fas fa-file-medical"></i></div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">完成诊断报告</div>
+                                            <div class="activity-desc">为患者张伟完成 DR 报告</div>
+                                        </div>
+                                        <div class="activity-time">03-25 15:48</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- 修改密码弹窗 -->
+    <div id="passwordModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-key"></i> 修改密码</h3>
+                <button class="icon-btn" onclick="closePasswordModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <label class="form-label">当前密码 <span class="required">*</span></label>
+                    <input type="password" class="input" id="currentPassword" placeholder="请输入当前密码">
+                    <div class="form-error">请输入当前密码</div>
+                </div>
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <label class="form-label">新密码 <span class="required">*</span></label>
+                    <input type="password" class="input" id="newPassword" placeholder="请输入新密码" oninput="checkPasswordStrength()">
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                    </div>
+                    <div class="strength-label" id="strengthLabel">密码强度：未知</div>
+                    <div class="form-hint">至少8位，包含大小写字母、数字和特殊字符</div>
+                    <div class="form-error">密码格式不符合要求</div>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">确认新密码 <span class="required">*</span></label>
+                    <input type="password" class="input" id="confirmPassword" placeholder="请再次输入新密码">
+                    <div class="form-error">两次输入的密码不一致</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closePasswordModal()">取消</button>
+                <button class="btn btn-primary" onclick="savePassword()"><i class="fas fa-save"></i> 保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 退出确认弹窗 -->
+    <div id="logoutModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--danger-color);"><i class="fas fa-sign-out-alt"></i> 确认退出</h3>
+                <button class="icon-btn" onclick="closeLogoutModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p style="color: var(--text-secondary); margin-bottom: 8px;">确定要退出当前账号吗？</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-default" onclick="closeLogoutModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> 确认退出</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 用户下拉菜单
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        userDropdown?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdownMenu.classList.toggle('show');
+        });
+        document.addEventListener('click', function() {
+            userDropdownMenu?.classList.remove('show');
+        });
+
+        // 退出登录
+        function openLogoutModal() {
+            userDropdownMenu?.classList.remove('show');
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        function confirmLogout() {
+            closeLogoutModal();
+            showToast('正在退出...', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 800);
+        }
+
+        // Toast提示
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            const icons = {
+                success: 'check-circle',
+                info: 'info-circle',
+                warning: 'exclamation-circle'
+            };
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${icons[type]}"></i> ${message}`;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // 编辑模式切换
+        function toggleEditMode(section) {
+            const viewEl = document.getElementById('basicInfoView');
+            const editEl = document.getElementById('basicInfoEdit');
+
+            if (editEl.style.display === 'none') {
+                viewEl.style.display = 'none';
+                editEl.style.display = 'grid';
+            } else {
+                viewEl.style.display = 'grid';
+                editEl.style.display = 'none';
+            }
+        }
+
+        // 保存基本信息
+        function saveBasicInfo() {
+            const name = document.getElementById('userName').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            // 简单验证
+            let hasError = false;
+
+            if (!name.trim()) {
+                document.getElementById('userName').parentElement.classList.add('has-error');
+                hasError = true;
+            } else {
+                document.getElementById('userName').parentElement.classList.remove('has-error');
+            }
+
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                document.getElementById('phone').parentElement.classList.add('has-error');
+                hasError = true;
+            } else {
+                document.getElementById('phone').parentElement.classList.remove('has-error');
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('email').parentElement.classList.add('has-error');
+                hasError = true;
+            } else {
+                document.getElementById('email').parentElement.classList.remove('has-error');
+            }
+
+            if (!hasError) {
+                showToast('个人信息保存成功', 'success');
+                toggleEditMode('basic');
+            }
+        }
+
+        // 密码修改弹窗
+        function openPasswordModal() {
+            userDropdownMenu?.classList.remove('show');
+            document.getElementById('passwordModal').style.display = 'flex';
+        }
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            // 清空表单
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            resetPasswordStrength();
+        }
+
+        // 密码强度检测
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const bars = document.querySelectorAll('.strength-bar');
+            const label = document.getElementById('strengthLabel');
+
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
+
+            bars.forEach((bar, index) => {
+                bar.className = 'strength-bar';
+                if (index < strength) {
+                    bar.classList.add('active');
+                    if (strength >= 3) bar.classList.add('strong');
+                    else if (strength >= 2) bar.classList.add('medium');
+                }
+            });
+
+            const labels = ['未知', '弱', '中等', '强', '非常强'];
+            label.textContent = `密码强度：${labels[strength] || '未知']}`;
+        }
+
+        function resetPasswordStrength() {
+            const bars = document.querySelectorAll('.strength-bar');
+            bars.forEach(bar => {
+                bar.className = 'strength-bar';
+            });
+            document.getElementById('strengthLabel').textContent = '密码强度：未知';
+        }
+
+        // 保存密码
+        function savePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPwd = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            let hasError = false;
+
+            if (!current) {
+                document.getElementById('currentPassword').parentElement.classList.add('has-error');
+                hasError = true;
+            } else {
+                document.getElementById('currentPassword').parentElement.classList.remove('has-error');
+            }
+
+            if (newPwd.length < 8) {
+                document.getElementById('newPassword').parentElement.classList.add('has-error');
+                hasError = true;
+            } else {
+                document.getElementById('newPassword').parentElement.classList.remove('has-error');
+            }
+
+            if (newPwd !== confirm) {
+                document.getElementById('confirmPassword').parentElement.classList.add('has-error');
+                hasError = true;
+            } else {
+                document.getElementById('confirmPassword').parentElement.classList.remove('has-error');
+            }
+
+            if (!hasError) {
+                showToast('密码修改成功', 'success');
+                closePasswordModal();
+            }
+        }
+
+        // 点击背景关闭弹窗
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.style.display = 'none';
+            });
+        });
+
+        // 开关控件事件
+        document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const title = this.closest('.setting-item').querySelector('.setting-title').textContent;
+                showToast(`${title}已${this.checked ? '启用' : '禁用'}`, 'info');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+    </style>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-x-ray"></i></div><span class="sidebar-title">D-Site</span></div>
+            <div class="sidebar-menu">
+                <a class="menu-item" href="dashboard.html"><i class="fas fa-th-large"></i><span>仪表盘</span></a>
+                <div class="menu-section">云胶片业务</div>
+                <a class="menu-item" href="patients.html"><i class="fas fa-users"></i><span>患者管理</span></a>
+                <a class="menu-item" href="examinations.html"><i class="fas fa-clipboard-list"></i><span>检查管理</span><span class="badge">5</span></a>
+                <a class="menu-item" href="images.html"><i class="fas fa-images"></i><span>影像管理</span></a>
+                <a class="menu-item" href="image-viewer.html"><i class="fas fa-eye"></i><span>DICOM阅片</span></a>
+                <a class="menu-item" href="reports.html"><i class="fas fa-file-medical"></i><span>诊断报告</span></a>
+                <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
+                <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
+                <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">系统管理</div>
+                <a class="menu-item active" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
+                <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
+                <a class="menu-item" href="depts.html"><i class="fas fa-hospital"></i><span>院区管理</span></a>
+                <a class="menu-item" href="dict.html"><i class="fas fa-book"></i><span>字典管理</span></a>
+                <a class="menu-item" href="logs.html"><i class="fas fa-history"></i><span>日志管理</span></a>
+                <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left"><div class="breadcrumb"><span>首页</span><i class="fas fa-chevron-right" style="font-size: 10px;"></i><span>用户管理</span></div></div>
+                <div class="header-right">
+                    <div class="header-icon"><i class="fas fa-bell"></i><span class="count"></span></div>
+                    <div class="header-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="user-info"><div class="user-avatar">A</div><div class="user-detail"><span class="user-name">管理员</span><span class="user-role">超级管理员</span></div></div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="page-header"><h1 class="page-title">用户管理</h1><p class="page-desc">管理系统用户账号</p></div>
+                <div class="card">
+                    <div class="table-toolbar"><div class="toolbar-left"><button class="btn btn-primary" onclick="openAddUserModal()"><i class="fas fa-user-plus"></i> 新增用户</button></div></div>
+                    <table class="data-table">
+                        <thead><tr><th>用户ID</th><th>用户名</th><th>昵称</th><th>手机号</th><th>角色</th><th>院区</th><th>状态</th><th>最后登录</th><th>操作</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>admin</td><td>管理员</td><td>138****0001</td><td><span style="color: var(--primary-color);">超级管理员</span></td><td>总院</td><td><span class="status-tag normal">正常</span></td><td>2026-03-26 10:30</td><td><div class="action-btns"><button class="action-btn" title="编辑" onclick="openEditUserModal(this)"><i class="fas fa-edit"></i></button><button class="action-btn" title="重置密码" onclick="openResetPwdModal(this)"><i class="fas fa-key"></i></button><button class="action-btn danger" title="删除" onclick="openDeleteUserModal(this)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td>2</td><td>radiologist</td><td>张放射</td><td>139****0002</td><td>放射科医生</td><td>总院</td><td><span class="status-tag normal">正常</span></td><td>2026-03-26 09:15</td><td><div class="action-btns"><button class="action-btn" title="编辑" onclick="openEditUserModal(this)"><i class="fas fa-edit"></i></button><button class="action-btn" title="重置密码" onclick="openResetPwdModal(this)"><i class="fas fa-key"></i></button><button class="action-btn danger" title="删除" onclick="openDeleteUserModal(this)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td>3</td><td>clinician</td><td>李临床</td><td>137****0003</td><td>临床医生</td><td>分院</td><td><span class="status-tag normal">正常</span></td><td>2026-03-25 18:00</td><td><div class="action-btns"><button class="action-btn" title="编辑" onclick="openEditUserModal(this)"><i class="fas fa-edit"></i></button><button class="action-btn" title="重置密码" onclick="openResetPwdModal(this)"><i class="fas fa-key"></i></button><button class="action-btn danger" title="删除" onclick="openDeleteUserModal(this)"><i class="fas fa-trash"></i></button></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 新增用户弹窗 -->
+            <div id="addUserModal" class="modal-overlay" style="display: none;">
+                <div class="modal" style="max-width: 680px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title"><i class="fas fa-user-plus" style="color: var(--primary-color); margin-right: 8px;"></i>新增用户</h3>
+                        <button class="icon-btn" onclick="closeAddUserModal()"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <div class="modal-user-avatar">
+                        <div class="avatar-preview" id="avatarPreview">U</div>
+                        <div class="avatar-hint">
+                            <p>用户头像</p>
+                            <button class="btn btn-sm" type="button"><i class="fas fa-upload"></i> 上传头像</button>
+                        </div>
+                    </div>
+
+                    <form class="modal-form" onsubmit="handleAddUser(event)">
+                        <div class="form-item">
+                            <label class="form-label">用户名<span class="required">*</span></label>
+                            <input type="text" class="input" name="username" placeholder="请输入用户名" required>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">昵称<span class="required">*</span></label>
+                            <input type="text" class="input" name="nickname" placeholder="请输入昵称" required>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">手机号<span class="required">*</span></label>
+                            <input type="tel" class="input" name="phone" placeholder="请输入手机号" required>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">邮箱</label>
+                            <input type="email" class="input" name="email" placeholder="请输入邮箱">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">角色<span class="required">*</span></label>
+                            <select class="select" name="role" style="width: 100%;" required>
+                                <option value="">请选择角色</option>
+                                <option value="1">超级管理员</option>
+                                <option value="2">放射科医生</option>
+                                <option value="3">临床医生</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">院区<span class="required">*</span></label>
+                            <select class="select" name="dept" style="width: 100%;" required>
+                                <option value="">请选择院区</option>
+                                <option value="100">总院</option>
+                                <option value="101">放射科</option>
+                                <option value="102">骨科</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">初始密码<span class="required">*</span></label>
+                            <input type="password" class="input" name="password" placeholder="请输入初始密码" required>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">确认密码<span class="required">*</span></label>
+                            <input type="password" class="input" name="confirmPassword" placeholder="请再次输入密码" required>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">性别</label>
+                            <select class="select" name="sex" style="width: 100%;">
+                                <option value="">请选择性别</option>
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                                <option value="2">未知</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">状态</label>
+                            <select class="select" name="status" style="width: 100%;">
+                                <option value="0">正常</option>
+                                <option value="1">停用</option>
+                            </select>
+                        </div>
+                        <div class="form-item full-width">
+                            <label class="form-label">备注</label>
+                            <textarea class="textarea" name="remark" rows="2" placeholder="请输入备注信息"></textarea>
+                        </div>
+
+                        <div class="modal-footer full-width" style="grid-column: 1 / -1;">
+                            <button type="button" class="btn btn-default" onclick="closeAddUserModal()">取消</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> 确认创建</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 编辑用户弹窗 -->
+            <div id="editUserModal" class="modal-overlay" style="display: none;">
+                <div class="modal" style="max-width: 680px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title"><i class="fas fa-edit" style="color: var(--primary-color); margin-right: 8px;"></i>编辑用户</h3>
+                        <button class="icon-btn" onclick="closeEditUserModal()"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <form class="modal-form" onsubmit="handleEditUser(event)">
+                        <input type="hidden" name="userId" id="editUserId">
+                        <div class="form-item">
+                            <label class="form-label">用户名</label>
+                            <input type="text" class="input" name="username" id="editUsername" readonly style="background: var(--bg-color);">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">昵称<span class="required">*</span></label>
+                            <input type="text" class="input" name="nickname" id="editNickname" placeholder="请输入昵称" required>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">手机号<span class="required">*</span></label>
+                            <input type="tel" class="input" name="phone" id="editPhone" placeholder="请输入手机号" required>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">邮箱</label>
+                            <input type="email" class="input" name="email" id="editEmail" placeholder="请输入邮箱">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">角色<span class="required">*</span></label>
+                            <select class="select" name="role" id="editRole" style="width: 100%;" required>
+                                <option value="">请选择角色</option>
+                                <option value="1">超级管理员</option>
+                                <option value="2">放射科医生</option>
+                                <option value="3">临床医生</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">院区<span class="required">*</span></label>
+                            <select class="select" name="dept" id="editDept" style="width: 100%;" required>
+                                <option value="">请选择院区</option>
+                                <option value="100">总院</option>
+                                <option value="101">放射科</option>
+                                <option value="102">骨科</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">性别</label>
+                            <select class="select" name="sex" id="editSex" style="width: 100%;">
+                                <option value="">请选择性别</option>
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                                <option value="2">未知</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label">状态</label>
+                            <select class="select" name="status" id="editStatus" style="width: 100%;">
+                                <option value="0">正常</option>
+                                <option value="1">停用</option>
+                            </select>
+                        </div>
+                        <div class="form-item full-width">
+                            <label class="form-label">备注</label>
+                            <textarea class="textarea" name="remark" id="editRemark" rows="2" placeholder="请输入备注信息"></textarea>
+                        </div>
+
+                        <div class="modal-footer full-width" style="grid-column: 1 / -1;">
+                            <button type="button" class="btn btn-default" onclick="closeEditUserModal()">取消</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> 保存修改</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 重置密码弹窗 -->
+            <div id="resetPwdModal" class="modal-overlay" style="display: none;">
+                <div class="modal" style="max-width: 440px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title"><i class="fas fa-key" style="color: var(--warning-color); margin-right: 8px;"></i>重置密码</h3>
+                        <button class="icon-btn" onclick="closeResetPwdModal()"><i class="fas fa-times"></i></button>
+                    </div>
+                    <form onsubmit="handleResetPwd(event)">
+                        <input type="hidden" name="userId" id="resetPwdUserId">
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">将为用户 <strong id="resetPwdUserName"></strong> 重置密码，默认密码为：<code style="background: var(--bg-color); padding: 2px 8px; border-radius: 4px;">admin123</code></p>
+                        <div class="form-item" style="margin-bottom: 0;">
+                            <label class="form-label">新密码<span class="required">*</span></label>
+                            <input type="password" class="input" name="newPassword" id="newPwdInput" placeholder="请输入新密码" required>
+                        </div>
+                        <div class="modal-footer" style="margin-bottom: 0;">
+                            <button type="button" class="btn btn-default" onclick="closeResetPwdModal()">取消</button>
+                            <button type="submit" class="btn btn-warning"><i class="fas fa-check"></i> 确认重置</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 删除用户确认弹窗 -->
+            <div id="deleteUserModal" class="modal-overlay" style="display: none;">
+                <div class="modal" style="max-width: 420px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title"><i class="fas fa-exclamation-triangle" style="color: #ff4d4f; margin-right: 8px;"></i>确认删除</h3>
+                        <button class="icon-btn" onclick="closeDeleteUserModal()"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="modal-body" style="text-align: center;">
+                        <div style="width: 64px; height: 64px; border-radius: 50%; background: #fff1f0; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <i class="fas fa-trash" style="font-size: 28px; color: #ff4d4f;"></i>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">确定要删除以下用户吗？此操作不可恢复。</p>
+                        <p id="deleteUserName" style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px;">-</p>
+                        <input type="hidden" id="deleteUserId">
+                    </div>
+                    <div class="modal-footer" style="justify-content: center;">
+                        <button type="button" class="btn btn-default" onclick="closeDeleteUserModal()">取消</button>
+                        <button type="button" class="btn btn-danger" onclick="handleDeleteUser()"><i class="fas fa-trash"></i> 确认删除</button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // 打开新增用户弹窗
+                function openAddUserModal() {
+                    document.getElementById('addUserModal').style.display = 'flex';
+                }
+
+                // 关闭新增用户弹窗
+                function closeAddUserModal() {
+                    document.getElementById('addUserModal').style.display = 'none';
+                    document.querySelector('#addUserModal form').reset();
+                    document.getElementById('avatarPreview').textContent = 'U';
+                }
+
+                // 提交新增用户
+                function handleAddUser(e) {
+                    e.preventDefault();
+                    const form = e.target;
+                    const password = form.password.value;
+                    const confirmPassword = form.confirmPassword.value;
+
+                    if (password !== confirmPassword) {
+                        alert('两次输入的密码不一致，请重新输入');
+                        return;
+                    }
+
+                    if (password.length < 6) {
+                        alert('密码长度不能少于6位');
+                        return;
+                    }
+
+                    // 模拟提交
+                    const username = form.username.value;
+                    const nickname = form.nickname.value;
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = '<td>' + (parseInt(document.querySelector('.data-table tbody tr:last-child td')?.textContent || 0) + 1) + '</td>' +
+                        '<td>' + username + '</td>' +
+                        '<td>' + nickname + '</td>' +
+                        '<td>' + form.phone.value.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') + '</td>' +
+                        '<td>' + form.role.options[form.role.selectedIndex].text + '</td>' +
+                        '<td>' + form.dept.options[form.dept.selectedIndex].text + '</td>' +
+                        '<td><span class="status-tag normal">正常</span></td>' +
+                        '<td>—</td>' +
+                        '<td><div class="action-btns">' +
+                        '<button class="action-btn" title="编辑" onclick="openEditUserModal(this)"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn" title="重置密码" onclick="openResetPwdModal(this)"><i class="fas fa-key"></i></button>' +
+                        '</div></td>';
+                    document.querySelector('.data-table tbody').appendChild(newRow);
+                    closeAddUserModal();
+                    alert('用户 ' + username + ' 创建成功！');
+                }
+
+                // 打开编辑用户弹窗
+                function openEditUserModal(btn) {
+                    const row = btn.closest('tr');
+                    const tds = row.querySelectorAll('td');
+                    document.getElementById('editUserId').value = tds[0].textContent;
+                    document.getElementById('editUsername').value = tds[1].textContent;
+                    document.getElementById('editNickname').value = tds[2].textContent;
+                    document.getElementById('editPhone').value = tds[3].textContent;
+                    document.getElementById('editEmail').value = '';
+                    document.getElementById('editRemark').value = '';
+                    document.getElementById('editUserModal').style.display = 'flex';
+                }
+
+                // 关闭编辑用户弹窗
+                function closeEditUserModal() {
+                    document.getElementById('editUserModal').style.display = 'none';
+                }
+
+                // 提交编辑用户
+                function handleEditUser(e) {
+                    e.preventDefault();
+                    const form = e.target;
+                    closeEditUserModal();
+                    alert('用户信息修改成功！');
+                }
+
+                // 打开重置密码弹窗
+                function openResetPwdModal(btn) {
+                    const row = btn.closest('tr');
+                    const username = row.querySelector('td:nth-child(2)').textContent;
+                    document.getElementById('resetPwdUserId').value = row.querySelector('td:nth-child(1)').textContent;
+                    document.getElementById('resetPwdUserName').textContent = username;
+                    document.getElementById('resetPwdModal').style.display = 'flex';
+                }
+
+                // 关闭重置密码弹窗
+                function closeResetPwdModal() {
+                    document.getElementById('resetPwdModal').style.display = 'none';
+                    document.querySelector('#resetPwdModal form').reset();
+                }
+
+                // 提交重置密码
+                function handleResetPwd(e) {
+                    e.preventDefault();
+                    closeResetPwdModal();
+                    alert('密码重置成功，默认密码为：admin123');
+                }
+
+                // 打开删除用户弹窗
+                function openDeleteUserModal(btn) {
+                    const row = btn.closest('tr');
+                    const username = row.querySelector('td:nth-child(2)').textContent;
+                    const userId = row.querySelector('td:nth-child(1)').textContent;
+                    document.getElementById('deleteUserId').value = userId;
+                    document.getElementById('deleteUserName').textContent = username;
+                    document.getElementById('deleteUserModal').style.display = 'flex';
+                }
+
+                // 关闭删除用户弹窗
+                function closeDeleteUserModal() {
+                    document.getElementById('deleteUserModal').style.display = 'none';
+                }
+
+                // 确认删除用户
+                function handleDeleteUser() {
+                    const userId = document.getElementById('deleteUserId').value;
+                    const row = document.querySelector(`.data-table tbody tr td:first-child`).parentElement;
+                    const rows = document.querySelectorAll('.data-table tbody tr');
+                    for (let row of rows) {
+                        if (row.querySelector('td').textContent === userId) {
+                            row.remove();
+                            break;
+                        }
+                    }
+                    closeDeleteUserModal();
+                    alert('用户删除成功！');
+                }
+
+                // 点击弹窗背景关闭
+                document.getElementById('addUserModal').addEventListener('click', function(e) {
+                    if (e.target === this) closeAddUserModal();
+                });
+                document.getElementById('editUserModal').addEventListener('click', function(e) {
+                    if (e.target === this) closeEditUserModal();
+                });
+                document.getElementById('resetPwdModal').addEventListener('click', function(e) {
+                    if (e.target === this) closeResetPwdModal();
+                });
+                document.getElementById('deleteUserModal').addEventListener('click', function(e) {
+                    if (e.target === this) closeDeleteUserModal();
+                });
+
+                // 用户名输入时更新头像预览
+                document.querySelector('#addUserModal input[name="username"]')?.addEventListener('input', function(e) {
+                    document.getElementById('avatarPreview').textContent = e.target.value.charAt(0).toUpperCase() || 'U';
+                });
+            </script>
+        </div>
+    </div>
+</body>
+</html>

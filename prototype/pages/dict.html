@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字典管理 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+    </style>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-x-ray"></i></div><span class="sidebar-title">D-Site</span></div>
+            <div class="sidebar-menu">
+                <a class="menu-item" href="dashboard.html"><i class="fas fa-th-large"></i><span>仪表盘</span></a>
+                <div class="menu-section">云胶片业务</div>
+                <a class="menu-item" href="patients.html"><i class="fas fa-users"></i><span>患者管理</span></a>
+                <a class="menu-item" href="examinations.html"><i class="fas fa-clipboard-list"></i><span>检查管理</span><span class="badge">5</span></a>
+                <a class="menu-item" href="images.html"><i class="fas fa-images"></i><span>影像管理</span></a>
+                <a class="menu-item" href="image-viewer.html"><i class="fas fa-eye"></i><span>DICOM阅片</span></a>
+                <a class="menu-item" href="reports.html"><i class="fas fa-file-medical"></i><span>诊断报告</span></a>
+                <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
+                <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
+                <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">系统管理</div>
+                <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
+                <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
+                <a class="menu-item" href="depts.html"><i class="fas fa-hospital"></i><span>院区管理</span></a>
+                <a class="menu-item active" href="dict.html"><i class="fas fa-book"></i><span>字典管理</span></a>
+                <a class="menu-item" href="logs.html"><i class="fas fa-history"></i><span>日志管理</span></a>
+                <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left"><div class="breadcrumb"><span>首页</span><i class="fas fa-chevron-right" style="font-size: 10px;"></i><span>字典管理</span></div></div>
+                <div class="header-right">
+                    <div class="header-icon"><i class="fas fa-bell"></i><span class="count"></span></div>
+                    <div class="header-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="user-info"><div class="user-avatar">A</div><div class="user-detail"><span class="user-name">管理员</span><span class="user-role">超级管理员</span></div></div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="page-header"><h1 class="page-title">字典管理</h1><p class="page-desc">管理系统数据字典</p></div>
+                <div style="display: grid; grid-template-columns: 300px 1fr; gap: 24px;">
+                    <div class="card" style="padding: 16px;">
+                        <div class="card-header"><div class="card-title"><i class="fas fa-list"></i> 字典类型</div><button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button></div>
+                        <div class="dict-type-list">
+                            <div class="dict-type-item active"><span>检查状态</span><span class="badge">4</span></div>
+                            <div class="dict-type-item"><span>检查类型</span><span class="badge">8</span></div>
+                            <div class="dict-type-item"><span>影像模态</span><span class="badge">12</span></div>
+                            <div class="dict-type-item"><span>性别</span><span class="badge">2</span></div>
+                            <div class="dict-type-item"><span>报告状态</span><span class="badge">3</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="table-toolbar"><div class="toolbar-left"><button class="btn btn-primary"><i class="fas fa-plus"></i> 新增字典</button></div></div>
+                        <table class="data-table">
+                            <thead><tr><th>字典标签</th><th>字典键值</th><th>排序</th><th>样式</th><th>默认</th><th>状态</th><th>操作</th></tr></thead>
+                            <tbody>
+                                <tr><td>待检查</td><td><code>pending</code></td><td>1</td><td><span class="status-tag pending">warning</span></td><td><i class="fas fa-check" style="color: var(--success-color);"></i></td><td><span class="status-tag normal">正常</span></td><td><div class="action-btns"><button class="action-btn" title="编辑"><i class="fas fa-edit"></i></button><button class="action-btn danger" title="删除"><i class="fas fa-trash"></i></button></div></td></tr>
+                                <tr><td>检查中</td><td><code>in_progress</code></td><td>2</td><td><span class="status-tag in-progress">warning</span></td><td></td><td><span class="status-tag normal">正常</span></td><td><div class="action-btns"><button class="action-btn" title="编辑"><i class="fas fa-edit"></i></button><button class="action-btn danger" title="删除"><i class="fas fa-trash"></i></button></div></td></tr>
+                                <tr><td>已完成</td><td><code>completed</code></td><td>3</td><td><span class="status-tag completed">success</span></td><td></td><td><span class="status-tag normal">正常</span></td><td><div class="action-btns"><button class="action-btn" title="编辑"><i class="fas fa-edit"></i></button><button class="action-btn danger" title="删除"><i class="fas fa-trash"></i></button></div></td></tr>
+                                <tr><td>已出报告</td><td><code>reported</code></td><td>4</td><td><span class="status-tag reported">primary</span></td><td></td><td><span class="status-tag normal">正常</span></td><td><div class="action-btns"><button class="action-btn" title="编辑"><i class="fas fa-edit"></i></button><button class="action-btn danger" title="删除"><i class="fas fa-trash"></i></button></div></td></tr>
+                            </tbody>
+                        </table>
+                        <!-- 分页 -->
+                        <div class="table-pagination">
+                            <div class="pagination-info">
+                                共 <span id="totalCount">0</span> 条记录，当前第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页
+                            </div>
+                            <div class="pagination-controls">
+                                <select class="select pagination-size" id="pageSize">
+                                    <option value="5">5条/页</option>
+                                    <option value="10" selected>10条/页</option>
+                                    <option value="20">20条/页</option>
+                                    <option value="50">50条/页</option>
+                                </select>
+                                <div class="pagination-buttons">
+                                    <button class="page-btn" id="prevPage" onclick="goToPage(currentPage - 1)" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <div class="page-numbers" id="pageNumbers"></div>
+                                    <button class="page-btn" id="nextPage" onclick="goToPage(currentPage + 1)" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增字典模态框 -->
+    <div id="addDictModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 640px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-plus-circle" style="color: var(--primary-color);"></i> 新增字典</h3>
+                <button class="icon-btn" onclick="closeModal('addDictModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="addDictForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-item">
+                        <label class="form-label">字典标签 <span style="color: var(--danger-color);">*</span></label>
+                        <input type="text" class="input" id="newDictLabel" placeholder="如：CT、MRI" maxlength="50">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">字典键值 <span style="color: var(--danger-color);">*</span></label>
+                        <input type="text" class="input" id="newDictValue" placeholder="如：CT、MRI" maxlength="50">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">所属类型 <span style="color: var(--danger-color);">*</span></label>
+                        <select class="select" id="newDictType" style="width: 100%;">
+                            <option value="">请选择</option>
+                            <option value="1">检查状态</option>
+                            <option value="2">检查类型</option>
+                            <option value="3">影像模态</option>
+                            <option value="4">性别</option>
+                            <option value="5">报告状态</option>
+                        </select>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">排序号</label>
+                        <input type="number" class="input" id="newDictSort" placeholder="0" min="0" value="0">
+                    </div>
+                    <div class="form-item" style="grid-column: span 2;">
+                        <label class="form-label">样式类型</label>
+                        <div style="display: flex; gap: 16px;">
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="newDictStyle" value="default" checked> 默认
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="newDictStyle" value="primary"> 主要
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="newDictStyle" value="success"> 成功
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="newDictStyle" value="warning"> 警告
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="newDictStyle" value="danger"> 危险
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">状态</label>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label class="switch">
+                                <input type="checkbox" id="newDictStatus" checked>
+                                <span class="switch-slider"></span>
+                            </label>
+                            <span id="newDictStatusText">正常</span>
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">设为默认</label>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label class="switch">
+                                <input type="checkbox" id="newDictDefault">
+                                <span class="switch-slider"></span>
+                            </label>
+                            <span id="newDictDefaultText">否</span>
+                        </div>
+                    </div>
+                    <div class="form-item" style="grid-column: span 2;">
+                        <label class="form-label">备注</label>
+                        <textarea class="input" id="newDictRemark" placeholder="请输入备注信息" rows="2" maxlength="200"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeModal('addDictModal')">取消</button>
+                    <button type="button" class="btn btn-default" onclick="resetAddForm()">重置</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> 保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 编辑字典模态框 -->
+    <div id="editDictModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 640px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-edit" style="color: var(--primary-color);"></i> 编辑字典项</h3>
+                <button class="icon-btn" onclick="closeModal('editDictModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="editDictForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-item">
+                        <label class="form-label">字典标签 <span style="color: var(--danger-color);">*</span></label>
+                        <input type="text" class="input" id="editDictLabel" placeholder="请输入字典标签" maxlength="50">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">字典键值</label>
+                        <input type="text" class="input" id="editDictValue" placeholder="键值" readonly style="background: var(--bg-color);">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">所属类型</label>
+                        <input type="text" class="input" id="editDictTypeName" readonly style="background: var(--bg-color);">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">排序号</label>
+                        <input type="number" class="input" id="editDictSort" placeholder="0" min="0" value="0">
+                    </div>
+                    <div class="form-item" style="grid-column: span 2;">
+                        <label class="form-label">样式类型</label>
+                        <div style="display: flex; gap: 16px;">
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="editDictStyle" value="default"> 默认
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="editDictStyle" value="primary"> 主要
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="editDictStyle" value="success"> 成功
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="editDictStyle" value="warning"> 警告
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="editDictStyle" value="danger"> 危险
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">状态</label>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label class="switch">
+                                <input type="checkbox" id="editDictStatus" checked>
+                                <span class="switch-slider"></span>
+                            </label>
+                            <span id="editDictStatusText">正常</span>
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">设为默认</label>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label class="switch">
+                                <input type="checkbox" id="editDictDefault">
+                                <span class="switch-slider"></span>
+                            </label>
+                            <span id="editDictDefaultText">否</span>
+                        </div>
+                    </div>
+                    <div class="form-item" style="grid-column: span 2;">
+                        <label class="form-label">备注</label>
+                        <textarea class="input" id="editDictRemark" placeholder="请输入备注信息" rows="2" maxlength="200"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeModal('editDictModal')">取消</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> 保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 删除字典确认弹窗 -->
+    <div id="deleteDictModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-exclamation-triangle" style="color: #ff4d4f; margin-right: 8px;"></i>确认删除</h3>
+                <button class="icon-btn" onclick="closeDeleteDictModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #fff1f0; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                    <i class="fas fa-trash" style="font-size: 28px; color: #ff4d4f;"></i>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">确定要删除以下字典项吗？此操作不可恢复。</p>
+                <p id="deleteDictLabel" style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px;">-</p>
+                <input type="hidden" id="deleteDictValue">
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-default" onclick="closeDeleteDictModal()">取消</button>
+                <button class="btn btn-danger" onclick="handleDeleteDict()"><i class="fas fa-trash"></i> 确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <style>
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
+        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
+        .toast.warning { background: #fffbe6; border: 1px solid #ffe58f; color: #faad14; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .switch { position: relative; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dcdfe6; transition: 0.3s; border-radius: 24px; }
+        .switch-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+        .switch input:checked + .switch-slider { background-color: var(--primary-color); }
+        .switch input:checked + .switch-slider:before { transform: translateX(20px); }
+
+        /* Pagination Styles */
+        .table-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 16px;
+        }
+        .pagination-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .pagination-size {
+            width: auto;
+            min-width: 90px;
+        }
+        .pagination-buttons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .page-btn {
+            min-width: 32px;
+            height: 32px;
+            padding: 0 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            color: var(--text-regular);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .page-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-numbers {
+            display: flex;
+            gap: 4px;
+            max-width: 200px;
+            overflow: hidden;
+        }
+        .page-ellipsis {
+            padding: 0 4px;
+            color: var(--text-secondary);
+        }
+    </style>
+
+    <script>
+        // 字典类型数据
+        let dictTypes = [
+            { id: 1, name: '检查状态', count: 4 },
+            { id: 2, name: '检查类型', count: 8 },
+            { id: 3, name: '影像模态', count: 12 },
+            { id: 4, name: '性别', count: 2 },
+            { id: 5, name: '报告状态', count: 3 },
+        ];
+
+        // 当前选中的字典类型
+        let currentDictType = dictTypes[0];
+
+        // 分页参数
+        let pagination = {
+            currentPage: 1,
+            pageSize: 10,
+            total: 0,
+            totalPages: 1
+        };
+
+        // 字典数据
+        let dictItems = {
+            1: [ // 检查状态
+                { label: '待检查', value: 'pending', sort: 1, style: 'warning', isDefault: true, status: 'normal' },
+                { label: '检查中', value: 'in_progress', sort: 2, style: 'warning', isDefault: false, status: 'normal' },
+                { label: '已完成', value: 'completed', sort: 3, style: 'success', isDefault: false, status: 'normal' },
+                { label: '已出报告', value: 'reported', sort: 4, style: 'primary', isDefault: false, status: 'normal' },
+            ],
+            2: [ // 检查类型
+                { label: 'CT', value: 'CT', sort: 1, style: 'primary', isDefault: true, status: 'normal' },
+                { label: 'MRI', value: 'MRI', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'DR', value: 'DR', sort: 3, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '超声', value: 'US', sort: 4, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'X光', value: 'XRAY', sort: 5, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '乳腺钼靶', value: 'MG', sort: 6, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'PET-CT', value: 'PT', sort: 7, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'DSA', value: 'DSA', sort: 8, style: 'primary', isDefault: false, status: 'normal' },
+            ],
+            3: [ // 影像模态
+                { label: 'CT', value: 'CT', sort: 1, style: 'primary', isDefault: true, status: 'normal' },
+                { label: 'MRI', value: 'MRI', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'DR', value: 'DR', sort: 3, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'CR', value: 'CR', sort: 4, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'US', value: 'US', sort: 5, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '超声', value: 'US2', sort: 6, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'XRAY', value: 'XRAY', sort: 7, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '乳腺钼靶', value: 'MG', sort: 8, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'DXR', value: 'DXR', sort: 9, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'CT-P', value: 'CTP', sort: 10, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'MR-P', value: 'MRP', sort: 11, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'RF', value: 'RF', sort: 12, style: 'primary', isDefault: false, status: 'normal' },
+            ],
+            4: [ // 性别
+                { label: '男', value: 'M', sort: 1, style: 'primary', isDefault: true, status: 'normal' },
+                { label: '女', value: 'F', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+            ],
+            5: [ // 报告状态
+                { label: '待撰写', value: 'pending', sort: 1, style: 'warning', isDefault: true, status: 'normal' },
+                { label: '已提交', value: 'submitted', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '已审核', value: 'approved', sort: 3, style: 'success', isDefault: false, status: 'normal' },
+            ],
+        };
+
+        function renderDictTypeList() {
+            const container = document.querySelector('.dict-type-list');
+            container.innerHTML = dictTypes.map(dt => `
+                <div class="dict-type-item ${currentDictType.id === dt.id ? 'active' : ''}" onclick="selectDictType(${dt.id})">
+                    <span>${dt.name}</span>
+                    <span class="badge">${dt.count}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderDictTable() {
+            const tbody = document.querySelector('.data-table tbody');
+            const allItems = dictItems[currentDictType.id] || [];
+
+            // 计算分页
+            pagination.total = allItems.length;
+            pagination.totalPages = Math.ceil(pagination.total / pagination.pageSize) || 1;
+
+            // 确保当前页码有效
+            if (pagination.currentPage > pagination.totalPages) {
+                pagination.currentPage = pagination.totalPages;
+            }
+            if (pagination.currentPage < 1) {
+                pagination.currentPage = 1;
+            }
+
+            // 获取当前页数据
+            const start = (pagination.currentPage - 1) * pagination.pageSize;
+            const end = start + pagination.pageSize;
+            const pageItems = allItems.slice(start, end);
+
+            // 渲染表格
+            tbody.innerHTML = pageItems.map(item => `
+                <tr>
+                    <td>${item.label}</td>
+                    <td><code>${item.value}</code></td>
+                    <td>${item.sort}</td>
+                    <td><span class="status-tag ${item.style}">${item.style}</span></td>
+                    <td>${item.isDefault ? '<i class="fas fa-check" style="color: var(--success-color);"></i>' : ''}</td>
+                    <td><span class="status-tag ${item.status === 'normal' ? 'normal' : 'danger'}">${item.status === 'normal' ? '正常' : '停用'}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn" title="编辑" onclick="editDict('${item.value}')"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn danger" title="删除" onclick="deleteDict('${item.value}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // 渲染分页
+            renderPagination();
+        }
+
+        function renderPagination() {
+            // 更新统计信息
+            document.getElementById('totalCount').textContent = pagination.total;
+            document.getElementById('currentPage').textContent = pagination.currentPage;
+            document.getElementById('totalPages').textContent = pagination.totalPages;
+
+            // 更新按钮状态
+            document.getElementById('prevPage').disabled = pagination.currentPage <= 1;
+            document.getElementById('nextPage').disabled = pagination.currentPage >= pagination.totalPages;
+
+            // 渲染页码
+            const pageNumbers = document.getElementById('pageNumbers');
+            let pages = getPageNumbers();
+            pageNumbers.innerHTML = pages.map(page => {
+                if (page === '...') {
+                    return '<span class="page-ellipsis">...</span>';
+                }
+                const isActive = page === pagination.currentPage ? 'active' : '';
+                return `<button class="page-btn ${isActive}" onclick="goToPage(${page})">${page}</button>`;
+            }).join('');
+        }
+
+        function getPageNumbers() {
+            const pages = [];
+            const total = pagination.totalPages;
+            const current = pagination.currentPage;
+            const delta = 2;
+
+            if (total <= 7) {
+                for (let i = 1; i <= total; i++) pages.push(i);
+            } else {
+                pages.push(1);
+                if (current - delta > 2) pages.push('...');
+
+                const start = Math.max(2, current - delta);
+                const end = Math.min(total - 1, current + delta);
+                for (let i = start; i <= end; i++) pages.push(i);
+
+                if (current + delta < total - 1) pages.push('...');
+                pages.push(total);
+            }
+            return pages;
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > pagination.totalPages || page === pagination.currentPage) return;
+            pagination.currentPage = page;
+            renderDictTable();
+        }
+
+        function changePageSize(size) {
+            pagination.pageSize = parseInt(size);
+            pagination.currentPage = 1;
+            renderDictTable();
+        }
+
+        function selectDictType(id) {
+            currentDictType = dictTypes.find(dt => dt.id === id);
+            pagination.currentPage = 1; // 切换类型时重置页码
+            renderDictTypeList();
+            renderDictTable();
+        }
+
+        function editDict(value) {
+            // 查找要编辑的字典项
+            let editItem = null;
+            for (const typeId in dictItems) {
+                const item = dictItems[typeId].find(i => i.value === value);
+                if (item) {
+                    editItem = item;
+                    editItem._typeId = typeId;
+                    break;
+                }
+            }
+
+            if (!editItem) return;
+
+            // 填充表单
+            document.getElementById('editDictLabel').value = editItem.label;
+            document.getElementById('editDictValue').value = editItem.value;
+            document.getElementById('editDictTypeName').value = dictTypes.find(dt => dt.id === parseInt(editItem._typeId))?.name || '';
+            document.getElementById('editDictSort').value = editItem.sort;
+            document.querySelector(`input[name="editDictStyle"][value="${editItem.style}"]`).checked = true;
+            document.getElementById('editDictStatus').checked = editItem.status === 'normal';
+            document.getElementById('editDictStatusText').textContent = editItem.status === 'normal' ? '正常' : '停用';
+            document.getElementById('editDictDefault').checked = editItem.isDefault;
+            document.getElementById('editDictDefaultText').textContent = editItem.isDefault ? '是' : '否';
+            document.getElementById('editDictRemark').value = editItem.remark || '';
+
+            // 显示模态框
+            document.getElementById('editDictModal').style.display = 'flex';
+        }
+
+        function deleteDict(value) {
+            document.getElementById('deleteDictValue').value = value;
+            document.getElementById('deleteDictLabel').textContent = value;
+            document.getElementById('deleteDictModal').style.display = 'flex';
+        }
+
+        function closeDeleteDictModal() {
+            document.getElementById('deleteDictModal').style.display = 'none';
+        }
+
+        function handleDeleteDict() {
+            const value = document.getElementById('deleteDictValue').value;
+            // 从数据中删除
+            const typeId = currentDictType.id.toString();
+            const index = dictItems[typeId].findIndex(item => item.value === value);
+            if (index > -1) {
+                dictItems[typeId].splice(index, 1);
+                // 更新类型计数
+                const typeObj = dictTypes.find(dt => dt.id === parseInt(typeId));
+                if (typeObj) typeObj.count--;
+
+                // 如果当前页没有数据了，回退到上一页
+                const allItems = dictItems[typeId] || [];
+                const maxPage = Math.ceil(allItems.length / pagination.pageSize) || 1;
+                if (pagination.currentPage > maxPage) {
+                    pagination.currentPage = maxPage;
+                }
+            }
+            closeDeleteDictModal();
+            renderDictTypeList();
+            renderDictTable();
+            showToast(`字典项 "${value}" 已删除`, 'warning');
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // 新增字典类型按钮 - 跳转到新页面
+        document.querySelector('.card .card-header .btn')?.addEventListener('click', function() {
+            window.location.href = 'dict-type-add.html';
+        });
+
+        // 新增字典按钮 - 打开模态框
+        document.querySelector('.table-toolbar .btn')?.addEventListener('click', function() {
+            openAddModal();
+        });
+
+        // 状态开关
+        document.getElementById('newDictStatus')?.addEventListener('change', function() {
+            document.getElementById('newDictStatusText').textContent = this.checked ? '正常' : '停用';
+        });
+
+        // 默认值开关
+        document.getElementById('newDictDefault')?.addEventListener('change', function() {
+            document.getElementById('newDictDefaultText').textContent = this.checked ? '是' : '否';
+        });
+
+        // 自动转换标签为键值
+        document.getElementById('newDictLabel')?.addEventListener('input', function() {
+            const valueInput = document.getElementById('newDictValue');
+            if (!valueInput.dataset.manual) {
+                valueInput.value = this.value.toUpperCase()
+                    .replace(/\s+/g, '_')
+                    .replace(/[^A-Z0-9_]/g, '');
+            }
+        });
+
+        document.getElementById('newDictValue')?.addEventListener('input', function() {
+            this.dataset.manual = 'true';
+        });
+
+        function openAddModal() {
+            // 设置当前选中的类型
+            document.getElementById('newDictType').value = currentDictType.id;
+            // 重置表单
+            resetAddForm();
+            // 显示模态框
+            document.getElementById('addDictModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function resetAddForm() {
+            document.getElementById('newDictLabel').value = '';
+            document.getElementById('newDictValue').value = '';
+            document.getElementById('newDictType').value = currentDictType.id;
+            document.getElementById('newDictSort').value = '0';
+            document.querySelector('input[name="newDictStyle"][value="default"]').checked = true;
+            document.getElementById('newDictStatus').checked = true;
+            document.getElementById('newDictStatusText').textContent = '正常';
+            document.getElementById('newDictDefault').checked = false;
+            document.getElementById('newDictDefaultText').textContent = '否';
+            document.getElementById('newDictRemark').value = '';
+            document.getElementById('newDictValue').dataset.manual = '';
+        }
+
+        // 表单提交
+        document.getElementById('addDictForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const label = document.getElementById('newDictLabel').value.trim();
+            const value = document.getElementById('newDictValue').value.trim();
+            const type = document.getElementById('newDictType').value;
+
+            if (!label) {
+                showToast('请输入字典标签', 'warning');
+                return;
+            }
+            if (!value) {
+                showToast('请输入字典键值', 'warning');
+                return;
+            }
+            if (!type) {
+                showToast('请选择字典类型', 'warning');
+                return;
+            }
+
+            const newItem = {
+                label,
+                value,
+                sort: parseInt(document.getElementById('newDictSort').value) || 0,
+                style: document.querySelector('input[name="newDictStyle"]:checked').value,
+                isDefault: document.getElementById('newDictDefault').checked,
+                status: document.getElementById('newDictStatus').checked ? 'normal' : 'disabled'
+            };
+
+            // 添加到数据
+            if (!dictItems[type]) dictItems[type] = [];
+            dictItems[type].push(newItem);
+
+            // 更新类型计数
+            const typeObj = dictTypes.find(dt => dt.id === parseInt(type));
+            if (typeObj) typeObj.count++;
+
+            // 切换到该类型并重置页码
+            const targetTypeId = parseInt(type);
+            if (targetTypeId !== currentDictType.id) {
+                currentDictType = dictTypes.find(dt => dt.id === targetTypeId);
+            }
+            pagination.currentPage = 1; // 新增后重置到第一页
+
+            closeModal('addDictModal');
+            renderDictTypeList();
+            renderDictTable();
+            showToast(`字典 "${label}" 添加成功`, 'success');
+        });
+
+        // 点击背景关闭模态框
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.style.display = 'none';
+            });
+        });
+
+        // 编辑模态框 - 状态开关
+        document.getElementById('editDictStatus')?.addEventListener('change', function() {
+            document.getElementById('editDictStatusText').textContent = this.checked ? '正常' : '停用';
+        });
+
+        // 编辑模态框 - 默认开关
+        document.getElementById('editDictDefault')?.addEventListener('change', function() {
+            document.getElementById('editDictDefaultText').textContent = this.checked ? '是' : '否';
+        });
+
+        // 编辑表单提交
+        document.getElementById('editDictForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const label = document.getElementById('editDictLabel').value.trim();
+            const value = document.getElementById('editDictValue').value.trim();
+
+            if (!label) {
+                showToast('请输入字典标签', 'warning');
+                return;
+            }
+
+            // 查找并更新数据
+            for (const typeId in dictItems) {
+                const item = dictItems[typeId].find(i => i.value === value);
+                if (item) {
+                    item.label = label;
+                    item.sort = parseInt(document.getElementById('editDictSort').value) || 0;
+                    item.style = document.querySelector('input[name="editDictStyle"]:checked').value;
+                    item.status = document.getElementById('editDictStatus').checked ? 'normal' : 'disabled';
+                    item.isDefault = document.getElementById('editDictDefault').checked;
+                    item.remark = document.getElementById('editDictRemark').value.trim();
+                    break;
+                }
+            }
+
+            closeModal('editDictModal');
+            renderDictTable();
+            showToast(`字典 "${label}" 更新成功`, 'success');
+        });
+
+        // 分页大小切换
+        document.getElementById('pageSize')?.addEventListener('change', function() {
+            changePageSize(this.value);
+        });
+
+        // 点击背景关闭删除弹窗
+        document.getElementById('deleteDictModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteDictModal();
+        });
+
+        // 初始化
+        renderDictTypeList();
+        renderDictTable();
+    </script>
+</body>
+</html>

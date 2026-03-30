@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影像查看 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #1890ff;
+            --success-color: #52c41a;
+            --warning-color: #faad14;
+            --danger-color: #ff4d4f;
+            --text-primary: #303133;
+            --text-regular: #606266;
+            --text-secondary: #909399;
+            --border-color: #dcdfe6;
+            --bg-color: #f5f7fa;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-color), #096dd9); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .logo-icon i { color: white; font-size: 20px; }
+        .logo-text { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .exam-info { display: flex; align-items: center; gap: 16px; font-size: 14px; color: var(--text-secondary); }
+        .exam-badge { padding: 4px 12px; background: #e6f7ff; color: var(--primary-color); border-radius: 4px; font-weight: 500; }
+
+        /* Login State */
+        .login-page { min-height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-container { width: 100%; max-width: 480px; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); }
+        .login-logo { text-align: center; margin-bottom: 30px; }
+        .login-logo-icon { width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary-color), #096dd9); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+        .login-logo-icon i { font-size: 32px; color: white; }
+        .login-logo h1 { font-size: 24px; color: var(--text-primary); margin-bottom: 8px; }
+        .login-logo p { color: var(--text-secondary); font-size: 14px; }
+        .exam-preview { background: var(--bg-color); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+        .exam-preview-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+        .exam-preview-item .label { color: var(--text-secondary); }
+        .exam-preview-item .value { color: var(--text-primary); font-weight: 500; }
+        .form-label { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; display: block; text-align: center; }
+        .input { padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; transition: all 0.3s; width: 100%; }
+        .input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1); }
+        .input.error { border-color: var(--danger-color); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s; border: none; width: 100%; gap: 8px; }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: #40a9ff; }
+        .btn-primary:disabled { background: #d9d9d9; cursor: not-allowed; }
+        .expire-info { margin-top: 20px; text-align: center; color: var(--text-secondary); font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .expire-info.warning { color: var(--warning-color); }
+        .error-msg { color: var(--danger-color); font-size: 13px; margin-top: 8px; text-align: center; display: none; }
+        .error-msg.show { display: block; }
+
+        /* Viewer State */
+        .viewer-page { display: none; }
+        .viewer-page.active { display: block; }
+        .viewer-container { display: flex; height: calc(100vh - 60px); }
+        .viewer-main { flex: 1; display: flex; flex-direction: column; background: #1a1a1a; }
+        .viewer-toolbar { height: 56px; background: #252525; display: flex; align-items: center; padding: 0 16px; gap: 12px; }
+        .tool-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; color: rgba(255,255,255,0.7); transition: all 0.3s; background: transparent; border: none; }
+        .tool-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        .tool-btn.active { background: var(--primary-color); color: white; }
+        .tool-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 8px; }
+        .viewer-canvas { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .image-placeholder { width: 80%; max-width: 600px; height: 70%; background: linear-gradient(135deg, #2a2a2a, #3a3a3a); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); }
+        .image-placeholder i { font-size: 80px; margin-bottom: 20px; }
+        .image-placeholder span { font-size: 16px; }
+        .image-placeholder small { font-size: 13px; margin-top: 8px; opacity: 0.7; }
+        .viewer-info { position: absolute; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 12px 20px; border-radius: 8px; color: white; font-size: 13px; display: flex; gap: 24px; }
+        .viewer-footer { background: #252525; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; color: rgba(255,255,255,0.8); font-size: 13px; }
+        .series-nav { display: flex; align-items: center; gap: 12px; }
+        .series-btn { width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .series-btn:hover { background: rgba(255,255,255,0.2); }
+        .viewer-sidebar { width: 280px; background: #252525; border-left: 1px solid #3a3a3a; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 16px; border-bottom: 1px solid #3a3a3a; color: white; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+        .series-list { flex: 1; overflow-y: auto; padding: 12px; }
+        .series-item { background: #1a1a1a; border-radius: 8px; padding: 12px; margin-bottom: 12px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; }
+        .series-item:hover { border-color: var(--primary-color); }
+        .series-item.active { border-color: var(--primary-color); background: #2a2a2a; }
+        .series-thumb { width: 100%; height: 80px; background: linear-gradient(135deg, #333, #444); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+        .series-info { color: rgba(255,255,255,0.8); font-size: 12px; }
+        .series-info .title { font-weight: 500; margin-bottom: 4px; color: white; }
+        .series-info .meta { color: rgba(255,255,255,0.5); }
+        .sidebar-footer { padding: 16px; border-top: 1px solid #3a3a3a; }
+        .action-btn { width: 100%; padding: 10px; border-radius: 8px; border: none; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; }
+        .action-btn.primary { background: var(--primary-color); color: white; }
+        .action-btn.primary:hover { background: #40a9ff; }
+        .action-btn.secondary { background: rgba(255,255,255,0.1); color: white; margin-top: 8px; }
+        .action-btn.secondary:hover { background: rgba(255,255,255,0.2); }
+
+        /* Toast */
+        .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: none; align-items: center; gap: 8px; animation: fadeIn 0.3s ease; }
+        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: var(--success-color); }
+        .toast.error { background: #fff1f0; border: 1px solid #ffccc7; color: var(--danger-color); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .viewer-sidebar { display: none; }
+            .exam-info { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo-icon"><i class="fas fa-x-ray"></i></div>
+            <span class="logo-text">D-Site 云胶片</span>
+        </div>
+        <div class="exam-info" id="examInfoHeader" style="display: none;">
+            <span>检查号: <strong id="headerExamId">-</strong></span>
+            <span class="exam-badge" id="headerModality">-</span>
+            <span id="headerPatient">-</span>
+        </div>
+        <div class="header-right">
+            <button class="action-btn secondary" style="width: auto; padding: 8px 16px;" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div class="login-page" id="loginPage">
+        <div class="login-container">
+            <div class="login-logo">
+                <div class="login-logo-icon"><i class="fas fa-x-ray"></i></div>
+                <h1>D-Site 云胶片</h1>
+                <p>您收到了一份医学影像分享</p>
+            </div>
+            <div class="exam-preview">
+                <div class="exam-preview-item"><span class="label">检查号</span><span class="value" id="previewExamId">EX2026032602</span></div>
+                <div class="exam-preview-item"><span class="label">患者姓名</span><span class="value" id="previewPatient">李娜</span></div>
+                <div class="exam-preview-item"><span class="label">检查类型</span><span class="value" id="previewModality">CT (腹部)</span></div>
+                <div class="exam-preview-item"><span class="label">检查日期</span><span class="value" id="previewDate">2026-03-25</span></div>
+                <div class="exam-preview-item"><span class="label">影像数量</span><span class="value" id="previewImageCount">36 幅</span></div>
+            </div>
+            <div>
+                <div class="form-label">请输入6位提取码</div>
+                <input type="text" class="input" id="accessCode" maxlength="6" placeholder="请输入提取码" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <div class="error-msg" id="errorMsg">提取码错误，请重新输入</div>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="verifyCode()">
+                <i class="fas fa-eye"></i> 查看影像
+            </button>
+            <div class="expire-info" id="expireInfo">
+                <i class="fas fa-clock"></i>
+                <span>此链接将于 <strong>2026-04-02</strong> 到期</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Viewer Page -->
+    <div class="viewer-page" id="viewerPage">
+        <div class="viewer-container">
+            <div class="viewer-main">
+                <div class="viewer-toolbar">
+                    <button class="tool-btn active" title="移动"><i class="fas fa-hand-pointer"></i></button>
+                    <button class="tool-btn" title="缩放"><i class="fas fa-search-plus"></i></button>
+                    <button class="tool-btn" title="窗宽窗位"><i class="fas fa-sun"></i></button>
+                    <button class="tool-btn" title="旋转"><i class="fas fa-sync"></i></button>
+                    <div class="tool-divider"></div>
+                    <button class="tool-btn" title="上一个序列"><i class="fas fa-chevron-left"></i></button>
+                    <button class="tool-btn" title="下一个序列"><i class="fas fa-chevron-right"></i></button>
+                    <div class="tool-divider"></div>
+                    <button class="tool-btn" title="播放动画"><i class="fas fa-play"></i></button>
+                    <button class="tool-btn" title="测量"><i class="fas fa-ruler-combined"></i></button>
+                    <button class="tool-btn" title="标注"><i class="fas fa-pen"></i></button>
+                </div>
+                <div class="viewer-canvas">
+                    <div class="image-placeholder" id="imagePlaceholder">
+                        <i class="fas fa-lungs"></i>
+                        <span>CT 腹部增强</span>
+                        <small>Window: W:350 L:40</small>
+                    </div>
+                    <div class="viewer-info" id="viewerInfo">
+                        <span><strong>序列:</strong> <span id="currentSeries">1</span>/<span id="totalSeries">4</span></span>
+                        <span><strong>图像:</strong> <span id="currentImage">1</span>/<span id="totalImages">12</span></span>
+                        <span><strong>层厚:</strong> 5mm</span>
+                    </div>
+                </div>
+                <div class="viewer-footer">
+                    <div class="series-nav">
+                        <button class="series-btn"><i class="fas fa-chevron-left"></i></button>
+                        <span>序列 1/4</span>
+                        <button class="series-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div style="display: flex; gap: 16px;">
+                        <span>Patient: <strong id="footerPatient">李娜</strong></span>
+                        <span>Exam: <strong id="footerExamId">EX2026032602</strong></span>
+                        <span>Modality: <strong>CT</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="viewer-sidebar">
+                <div class="sidebar-header"><i class="fas fa-layer-group"></i> 影像序列</div>
+                <div class="series-list">
+                    <div class="series-item active">
+                        <div class="series-thumb"><i class="fas fa-lungs"></i></div>
+                        <div class="series-info"><div class="title">腹部平扫 (动脉期)</div><div class="meta">12 图像 · CT</div></div>
+                    </div>
+                    <div class="series-item">
+                        <div class="series-thumb"><i class="fas fa-lungs"></i></div>
+                        <div class="series-info"><div class="title">腹部平扫 (静脉期)</div><div class="meta">12 图像 · CT</div></div>
+                    </div>
+                    <div class="series-item">
+                        <div class="series-thumb"><i class="fas fa-lungs"></i></div>
+                        <div class="series-info"><div class="title">腹部平扫 (延迟期)</div><div class="meta">12 图像 · CT</div></div>
+                    </div>
+                    <div class="series-item">
+                        <div class="series-thumb"><i class="fas fa-bone"></i></div>
+                        <div class="series-info"><div class="title">骨窗</div><div class="meta">6 图像 · CT</div></div>
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <button class="action-btn primary" onclick="showToast('报告功能开发中', 'info')">
+                        <i class="fas fa-file-medical"></i> 查看诊断报告
+                    </button>
+                    <button class="action-btn secondary">
+                        <i class="fas fa-share"></i> 再次分享
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 正确的提取码
+        const correctCode = '847293';
+        let isVerified = false;
+
+        function verifyCode() {
+            const code = document.getElementById('accessCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (code.length < 6) {
+                errorMsg.textContent = '请输入6位提取码';
+                errorMsg.classList.add('show');
+                document.getElementById('accessCode').classList.add('error');
+                return;
+            }
+
+            if (code === correctCode) {
+                errorMsg.classList.remove('show');
+                document.getElementById('accessCode').classList.remove('error');
+                isVerified = true;
+                showToast('验证成功，正在加载影像...', 'success');
+
+                // 模拟加载
+                setTimeout(() => {
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('viewerPage').classList.add('active');
+                    document.getElementById('examInfoHeader').style.display = 'flex';
+                    document.getElementById('headerExamId').textContent = document.getElementById('previewExamId').textContent;
+                    document.getElementById('headerModality').textContent = document.getElementById('previewModality').textContent;
+                    document.getElementById('headerPatient').textContent = document.getElementById('previewPatient').textContent;
+                }, 800);
+            } else {
+                errorMsg.textContent = '提取码错误，请重新输入';
+                errorMsg.classList.add('show');
+                document.getElementById('accessCode').classList.add('error');
+
+                // 模拟错误次数限制
+                if (document.getElementById('accessCode').dataset.attempts) {
+                    document.getElementById('accessCode').dataset.attempts++;
+                    if (document.getElementById('accessCode').dataset.attempts >= 3) {
+                        errorMsg.textContent = '错误次数过多，请稍后再试';
+                    }
+                } else {
+                    document.getElementById('accessCode').dataset.attempts = 1;
+                }
+            }
+        }
+
+        function logout() {
+            document.getElementById('viewerPage').classList.remove('active');
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('examInfoHeader').style.display = 'none';
+            document.getElementById('accessCode').value = '';
+            isVerified = false;
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // 回车提交
+        document.getElementById('accessCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyCode();
+            }
+        });
+
+        // 工具按钮交互
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            if (!btn.querySelector('.fa-chevron') && !btn.querySelector('.fa-play') && !btn.querySelector('.fa-ruler') && !btn.querySelector('.fa-pen')) {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            }
+        });
+
+        // 序列点击
+        document.querySelectorAll('.series-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.series-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

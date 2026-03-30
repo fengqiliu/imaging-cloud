@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色权限 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+    </style>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-x-ray"></i></div><span class="sidebar-title">D-Site</span></div>
+            <div class="sidebar-menu">
+                <a class="menu-item" href="dashboard.html"><i class="fas fa-th-large"></i><span>仪表盘</span></a>
+                <div class="menu-section">云胶片业务</div>
+                <a class="menu-item" href="patients.html"><i class="fas fa-users"></i><span>患者管理</span></a>
+                <a class="menu-item" href="examinations.html"><i class="fas fa-clipboard-list"></i><span>检查管理</span><span class="badge">5</span></a>
+                <a class="menu-item" href="images.html"><i class="fas fa-images"></i><span>影像管理</span></a>
+                <a class="menu-item" href="image-viewer.html"><i class="fas fa-eye"></i><span>DICOM阅片</span></a>
+                <a class="menu-item" href="reports.html"><i class="fas fa-file-medical"></i><span>诊断报告</span></a>
+                <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
+                <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
+                <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">系统管理</div>
+                <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
+                <a class="menu-item active" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
+                <a class="menu-item" href="depts.html"><i class="fas fa-hospital"></i><span>院区管理</span></a>
+                <a class="menu-item" href="dict.html"><i class="fas fa-book"></i><span>字典管理</span></a>
+                <a class="menu-item" href="logs.html"><i class="fas fa-history"></i><span>日志管理</span></a>
+                <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left"><div class="breadcrumb"><span>首页</span><i class="fas fa-chevron-right" style="font-size: 10px;"></i><span>角色权限</span></div></div>
+                <div class="header-right">
+                    <div class="header-icon"><i class="fas fa-bell"></i><span class="count"></span></div>
+                    <div class="header-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="user-dropdown">
+                        <div class="user-info" id="userDropdown">
+                            <div class="user-avatar">A</div>
+                            <div class="user-detail">
+                                <span class="user-name">管理员</span>
+                                <span class="user-role">超级管理员</span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="user-dropdown-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>个人中心</span></div>
+                            <div class="user-dropdown-item" onclick="showToast('修改密码开发中...', 'info')"><i class="fas fa-key"></i><span>修改密码</span></div>
+                            <div class="user-dropdown-divider"></div>
+                            <div class="user-dropdown-item danger" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i><span>退出登录</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="page-header"><h1 class="page-title">角色权限</h1><p class="page-desc">管理角色和权限配置</p></div>
+                <div style="display: grid; grid-template-columns: 1fr 400px; gap: 24px;">
+                    <div class="card">
+                        <div class="table-toolbar"><div class="toolbar-left"><button class="btn btn-primary"><i class="fas fa-plus"></i> 新增角色</button></div></div>
+                        <table class="data-table">
+                            <thead><tr><th>角色名称</th><th>角色标识</th><th>排序</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+                            <tbody>
+                                <tr><td><span style="color: var(--danger-color); font-weight: 600;">超级管理员</span></td><td><code>super_admin</code></td><td>1</td><td><span class="status-tag normal">正常</span></td><td>2026-01-01</td><td><div class="action-btns"><button class="action-btn" title="编辑" onclick="openEditRoleModal(1)"><i class="fas fa-edit"></i></button></div></td></tr>
+                                <tr><td>放射科医生</td><td><code>radiologist</code></td><td>2</td><td><span class="status-tag normal">正常</span></td><td>2026-01-01</td><td><div class="action-btns"><button class="action-btn" title="编辑" onclick="openEditRoleModal(2)"><i class="fas fa-edit"></i></button><button class="action-btn" title="分配权限" onclick="selectRole(2)"><i class="fas fa-shield-alt"></i></button><button class="action-btn danger" title="删除" onclick="openDeleteRoleModal(2)"><i class="fas fa-trash"></i></button></div></td></tr>
+                                <tr><td>临床医生</td><td><code>clinician</code></td><td>3</td><td><span class="status-tag normal">正常</span></td><td>2026-01-01</td><td><div class="action-btns"><button class="action-btn" title="编辑" onclick="openEditRoleModal(3)"><i class="fas fa-edit"></i></button><button class="action-btn" title="分配权限" onclick="selectRole(3)"><i class="fas fa-shield-alt"></i></button><button class="action-btn danger" title="删除" onclick="openDeleteRoleModal(3)"><i class="fas fa-trash"></i></button></div></td></tr>
+                                <tr><td>患者</td><td><code>patient</code></td><td>4</td><td><span class="status-tag normal">正常</span></td><td>2026-01-01</td><td><div class="action-btns"><button class="action-btn" title="编辑" onclick="openEditRoleModal(4)"><i class="fas fa-edit"></i></button><button class="action-btn" title="分配权限" onclick="selectRole(4)"><i class="fas fa-shield-alt"></i></button><button class="action-btn danger" title="删除" onclick="openDeleteRoleModal(4)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><div class="card-title"><i class="fas fa-shield-alt"></i> 权限配置 - 放射科医生</div></div>
+                        <div style="padding: 16px;">
+                            <div class="permission-group">
+                                <div class="permission-header"><input type="checkbox" checked> 云胶片业务</div>
+                                <div class="permission-list">
+                                    <label><input type="checkbox" checked> 患者管理 - 查看</label>
+                                    <label><input type="checkbox" checked> 患者管理 - 新增</label>
+                                    <label><input type="checkbox" checked> 患者管理 - 编辑</label>
+                                    <label><input type="checkbox"> 患者管理 - 删除</label>
+                                </div>
+                                <div class="permission-list">
+                                    <label><input type="checkbox" checked> 检查管理 - 查看</label>
+                                    <label><input type="checkbox" checked> 检查管理 - 新增</label>
+                                    <label><input type="checkbox" checked> 检查管理 - 编辑</label>
+                                    <label><input type="checkbox"> 检查管理 - 删除</label>
+                                </div>
+                                <div class="permission-list">
+                                    <label><input type="checkbox" checked> 影像管理 - 上传</label>
+                                    <label><input type="checkbox" checked> 影像管理 - 查看</label>
+                                    <label><input type="checkbox" checked> 影像管理 - 删除</label>
+                                </div>
+                                <div class="permission-list">
+                                    <label><input type="checkbox" checked> 报告管理 - 查看</label>
+                                    <label><input type="checkbox" checked> 报告管理 - 新增</label>
+                                    <label><input type="checkbox" checked> 报告管理 - 编辑</label>
+                                    <label><input type="checkbox" checked> 报告管理 - 导出</label>
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px; display: flex; gap: 12px;">
+                                <button class="btn btn-primary" style="flex: 1;"><i class="fas fa-save"></i> 保存</button>
+                                <button class="btn btn-default" style="flex: 1;"><i class="fas fa-redo"></i> 重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- 编辑角色弹窗 -->
+    <div id="editRoleModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-edit" style="color: var(--primary-color); margin-right: 8px;"></i>编辑角色</h3>
+                <button class="icon-btn" onclick="closeEditRoleModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="handleEditRole(event)">
+                <input type="hidden" id="editRoleId">
+                <div class="form-item" style="margin-bottom: 16px;">
+                    <label class="form-label">角色名称 <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" class="input" id="editRoleName" placeholder="请输入角色名称" required style="width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                </div>
+                <div class="form-item" style="margin-bottom: 16px;">
+                    <label class="form-label">角色标识 <span style="color: var(--danger-color);">*</span></label>
+                    <input type="text" class="input" id="editRoleCode" placeholder="如: role_admin" required style="width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                </div>
+                <div class="form-item" style="margin-bottom: 16px;">
+                    <label class="form-label">排序号</label>
+                    <input type="number" class="input" id="editRoleSort" value="0" min="0" style="width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                </div>
+                <div class="form-item" style="margin-bottom: 0;">
+                    <label class="form-label">状态</label>
+                    <select id="editRoleStatus" style="width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                        <option value="normal">正常</option>
+                        <option value="disabled">停用</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeEditRoleModal()">取消</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> 保存修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 删除角色确认弹窗 -->
+    <div id="deleteRoleModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-exclamation-triangle" style="color: #ff4d4f; margin-right: 8px;"></i>确认删除</h3>
+                <button class="icon-btn" onclick="closeDeleteRoleModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #fff1f0; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                    <i class="fas fa-trash" style="font-size: 28px; color: #ff4d4f;"></i>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">确定要删除以下角色吗？此操作不可恢复。</p>
+                <p id="deleteRoleName" style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px;">-</p>
+                <input type="hidden" id="deleteRoleId">
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-default" onclick="closeDeleteRoleModal()">取消</button>
+                <button class="btn btn-danger" onclick="handleDeleteRole()"><i class="fas fa-trash"></i> 确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal { background: white; border-radius: 12px; padding: 24px; min-width: 400px; max-width: 500px; }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .modal-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
+        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+
+    <script>
+        // 角色数据
+        let roles = [
+            { id: 1, name: '超级管理员', code: 'super_admin', sort: 1, status: 'normal', createTime: '2026-01-01', isSystem: true },
+            { id: 2, name: '放射科医生', code: 'radiologist', sort: 2, status: 'normal', createTime: '2026-01-01', isSystem: false },
+            { id: 3, name: '临床医生', code: 'clinician', sort: 3, status: 'normal', createTime: '2026-01-01', isSystem: false },
+            { id: 4, name: '患者', code: 'patient', sort: 4, status: 'normal', createTime: '2026-01-01', isSystem: false },
+        ];
+
+        // 权限配置数据
+        let permissions = {
+            1: { // super_admin - 所有权限
+                'cloudfilm:patient:list': true, 'cloudfilm:patient:add': true, 'cloudfilm:patient:edit': true, 'cloudfilm:patient:del': true,
+                'cloudfilm:exam:list': true, 'cloudfilm:exam:add': true, 'cloudfilm:exam:edit': true, 'cloudfilm:exam:del': true,
+                'cloudfilm:image:upload': true, 'cloudfilm:image:view': true, 'cloudfilm:image:del': true,
+                'cloudfilm:report:view': true, 'cloudfilm:report:add': true, 'cloudfilm:report:edit': true, 'cloudfilm:report:export': true,
+                'system:user:list': true, 'system:user:add': true, 'system:user:edit': true, 'system:user:del': true,
+                'system:role:list': true, 'system:role:add': true, 'system:role:edit': true, 'system:role:del': true,
+            },
+            2: { // radiologist
+                'cloudfilm:patient:list': true, 'cloudfilm:patient:add': true, 'cloudfilm:patient:edit': true, 'cloudfilm:patient:del': false,
+                'cloudfilm:exam:list': true, 'cloudfilm:exam:add': true, 'cloudfilm:exam:edit': true, 'cloudfilm:exam:del': false,
+                'cloudfilm:image:upload': true, 'cloudfilm:image:view': true, 'cloudfilm:image:del': true,
+                'cloudfilm:report:view': true, 'cloudfilm:report:add': true, 'cloudfilm:report:edit': true, 'cloudfilm:report:export': true,
+                'system:user:list': false, 'system:user:add': false, 'system:user:edit': false, 'system:user:del': false,
+                'system:role:list': false, 'system:role:add': false, 'system:role:edit': false, 'system:role:del': false,
+            },
+            3: { // clinician
+                'cloudfilm:patient:list': true, 'cloudfilm:patient:add': false, 'cloudfilm:patient:edit': false, 'cloudfilm:patient:del': false,
+                'cloudfilm:exam:list': true, 'cloudfilm:exam:add': false, 'cloudfilm:exam:edit': false, 'cloudfilm:exam:del': false,
+                'cloudfilm:image:upload': false, 'cloudfilm:image:view': true, 'cloudfilm:image:del': false,
+                'cloudfilm:report:view': true, 'cloudfilm:report:add': false, 'cloudfilm:report:edit': false, 'cloudfilm:report:export': true,
+                'system:user:list': false, 'system:user:add': false, 'system:user:edit': false, 'system:user:del': false,
+                'system:role:list': false, 'system:role:add': false, 'system:role:edit': false, 'system:role:del': false,
+            },
+            4: { // patient
+                'cloudfilm:patient:list': false, 'cloudfilm:patient:add': false, 'cloudfilm:patient:edit': false, 'cloudfilm:patient:del': false,
+                'cloudfilm:exam:list': true, 'cloudfilm:exam:add': false, 'cloudfilm:exam:edit': false, 'cloudfilm:exam:del': false,
+                'cloudfilm:image:upload': false, 'cloudfilm:image:view': true, 'cloudfilm:image:del': false,
+                'cloudfilm:report:view': false, 'cloudfilm:report:add': false, 'cloudfilm:report:edit': false, 'cloudfilm:report:export': false,
+                'system:user:list': false, 'system:user:add': false, 'system:user:edit': false, 'system:user:del': false,
+                'system:role:list': false, 'system:role:add': false, 'system:role:edit': false, 'system:role:del': false,
+            },
+        };
+
+        let currentRole = roles[1];
+
+        // 权限配置模板
+        const permissionConfig = [
+            { group: '云胶片业务', perms: [
+                { key: 'cloudfilm:patient:list', label: '患者管理 - 查看' },
+                { key: 'cloudfilm:patient:add', label: '患者管理 - 新增' },
+                { key: 'cloudfilm:patient:edit', label: '患者管理 - 编辑' },
+                { key: 'cloudfilm:patient:del', label: '患者管理 - 删除' },
+            ]},
+            { group: '', perms: [
+                { key: 'cloudfilm:exam:list', label: '检查管理 - 查看' },
+                { key: 'cloudfilm:exam:add', label: '检查管理 - 新增' },
+                { key: 'cloudfilm:exam:edit', label: '检查管理 - 编辑' },
+                { key: 'cloudfilm:exam:del', label: '检查管理 - 删除' },
+            ]},
+            { group: '', perms: [
+                { key: 'cloudfilm:image:upload', label: '影像管理 - 上传' },
+                { key: 'cloudfilm:image:view', label: '影像管理 - 查看' },
+                { key: 'cloudfilm:image:del', label: '影像管理 - 删除' },
+            ]},
+            { group: '', perms: [
+                { key: 'cloudfilm:report:view', label: '报告管理 - 查看' },
+                { key: 'cloudfilm:report:add', label: '报告管理 - 新增' },
+                { key: 'cloudfilm:report:edit', label: '报告管理 - 编辑' },
+                { key: 'cloudfilm:report:export', label: '报告管理 - 导出' },
+            ]},
+            { group: '系统管理', perms: [
+                { key: 'system:user:list', label: '用户管理 - 查看' },
+                { key: 'system:user:add', label: '用户管理 - 新增' },
+                { key: 'system:user:edit', label: '用户管理 - 编辑' },
+                { key: 'system:user:del', label: '用户管理 - 删除' },
+            ]},
+            { group: '', perms: [
+                { key: 'system:role:list', label: '角色管理 - 查看' },
+                { key: 'system:role:add', label: '角色管理 - 新增' },
+                { key: 'system:role:edit', label: '角色管理 - 编辑' },
+                { key: 'system:role:del', label: '角色管理 - 删除' },
+            ]},
+        ];
+
+        function renderTable() {
+            const tbody = document.querySelector('.data-table tbody');
+            tbody.innerHTML = roles.map(r => `
+                <tr onclick="selectRole(${r.id})" style="cursor: pointer;" class="${currentRole.id === r.id ? 'selected' : ''}">
+                    <td>${r.isSystem ? '<span style="color: var(--danger-color); font-weight: 600;">' + r.name + '</span>' : r.name}</td>
+                    <td><code>${r.code}</code></td>
+                    <td>${r.sort}</td>
+                    <td><span class="status-tag ${r.status}">${r.status === 'normal' ? '正常' : '停用'}</span></td>
+                    <td>${r.createTime}</td>
+                    <td><div class="action-btns">
+                        <button class="action-btn" title="编辑" onclick="event.stopPropagation(); editRole(${r.id})"><i class="fas fa-edit"></i></button>
+                        ${!r.isSystem ? '<button class="action-btn" title="分配权限" onclick="event.stopPropagation(); selectRole(' + r.id + ')"><i class="fas fa-shield-alt"></i></button>' : ''}
+                    </div></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPermissionPanel() {
+            const container = document.querySelector('.card .card-header + div');
+            let html = '';
+            let currentGroup = '';
+
+            permissionConfig.forEach((item, idx) => {
+                if (item.group && item.group !== currentGroup) {
+                    currentGroup = item.group;
+                    html += `<div class="permission-group" style="margin-top: ${idx > 0 ? '16px' : '0'}">
+                        <div class="permission-header"><input type="checkbox" id="group_${idx}" onchange="toggleGroup(${idx})"> ${item.group}</div>
+                        <div class="permission-list">`;
+                } else if (!item.group) {
+                    html += `<div class="permission-list">`;
+                }
+
+                item.perms.forEach(perm => {
+                    const checked = permissions[currentRole.id]?.[perm.key] ? 'checked' : '';
+                    html += `<label><input type="checkbox" data-perm="${perm.key}" ${checked} onchange="togglePermission('${perm.key}')"> ${perm.label}</label>`;
+                });
+
+                html += `</div>`;
+                if (item.group) html += `</div>`;
+            });
+
+            html += `<div style="margin-top: 20px; display: flex; gap: 12px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="savePermissions()"><i class="fas fa-save"></i> 保存</button>
+                <button class="btn btn-default" style="flex: 1;" onclick="resetPermissions()"><i class="fas fa-redo"></i> 重置</button>
+            </div>`;
+
+            container.innerHTML = html;
+            container.parentElement.querySelector('.card-header .card-title').innerHTML = `<i class="fas fa-shield-alt"></i> 权限配置 - ${currentRole.name}`;
+        }
+
+        function selectRole(id) {
+            currentRole = roles.find(r => r.id === id);
+            if (!currentRole) return;
+            renderTable();
+            renderPermissionPanel();
+        }
+
+        function togglePermission(key) {
+            if (!permissions[currentRole.id]) permissions[currentRole.id] = {};
+            permissions[currentRole.id][key] = !permissions[currentRole.id][key];
+        }
+
+        function toggleGroup(idx) {
+            const checkbox = document.getElementById('group_' + idx);
+            const group = permissionConfig.find((item, i) => item.group && i === idx);
+            if (group) {
+                group.perms.forEach(perm => {
+                    permissions[currentRole.id][perm.key] = checkbox.checked;
+                    const el = document.querySelector(`[data-perm="${perm.key}"]`);
+                    if (el) el.checked = checkbox.checked;
+                });
+            }
+        }
+
+        function savePermissions() {
+            showToast(`角色 "${currentRole.name}" 的权限保存成功`, 'success');
+        }
+
+        function resetPermissions() {
+            // 重新初始化当前角色的权限为默认值
+            const defaultPerms = {
+                1: { 'cloudfilm:patient:list': true, 'cloudfilm:patient:add': true, 'cloudfilm:patient:edit': true, 'cloudfilm:patient:del': true },
+                2: { 'cloudfilm:patient:list': true, 'cloudfilm:patient:add': true, 'cloudfilm:patient:edit': true, 'cloudfilm:patient:del': false },
+                3: { 'cloudfilm:patient:list': true, 'cloudfilm:patient:add': false, 'cloudfilm:patient:edit': false, 'cloudfilm:patient:del': false },
+                4: { 'cloudfilm:patient:list': false, 'cloudfilm:patient:add': false, 'cloudfilm:patient:edit': false, 'cloudfilm:patient:del': false },
+            };
+            permissions[currentRole.id] = defaultPerms[currentRole.id] || {};
+            renderPermissionPanel();
+            showToast('权限已重置', 'info');
+        }
+
+        function openEditRoleModal(id) {
+            const role = roles.find(r => r.id === id);
+            if (!role) return;
+            document.getElementById('editRoleId').value = role.id;
+            document.getElementById('editRoleName').value = role.name;
+            document.getElementById('editRoleCode').value = role.code;
+            document.getElementById('editRoleSort').value = role.sort;
+            document.getElementById('editRoleStatus').value = role.status;
+            document.getElementById('editRoleModal').style.display = 'flex';
+        }
+
+        function closeEditRoleModal() {
+            document.getElementById('editRoleModal').style.display = 'none';
+        }
+
+        function handleEditRole(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editRoleId').value);
+            const role = roles.find(r => r.id === id);
+            if (role) {
+                role.name = document.getElementById('editRoleName').value;
+                role.code = document.getElementById('editRoleCode').value;
+                role.sort = parseInt(document.getElementById('editRoleSort').value) || 0;
+                role.status = document.getElementById('editRoleStatus').value;
+                renderTable();
+                closeEditRoleModal();
+                showToast(`角色 "${role.name}" 修改成功`, 'success');
+            }
+        }
+
+        function openDeleteRoleModal(id) {
+            const role = roles.find(r => r.id === id);
+            if (!role) return;
+            document.getElementById('deleteRoleId').value = role.id;
+            document.getElementById('deleteRoleName').textContent = `${role.name} (${role.code})`;
+            document.getElementById('deleteRoleModal').style.display = 'flex';
+        }
+
+        function closeDeleteRoleModal() {
+            document.getElementById('deleteRoleModal').style.display = 'none';
+        }
+
+        function handleDeleteRole() {
+            const id = parseInt(document.getElementById('deleteRoleId').value);
+            const role = roles.find(r => r.id === id);
+            if (role) {
+                roles = roles.filter(r => r.id !== id);
+                if (currentRole.id === id && roles.length > 0) {
+                    currentRole = roles[0];
+                }
+                renderTable();
+                if (roles.length > 0) {
+                    renderPermissionPanel();
+                }
+                closeDeleteRoleModal();
+                showToast(`角色 "${role.name}" 已删除`, 'success');
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // 点击背景关闭弹窗
+        document.getElementById('editRoleModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeEditRoleModal();
+        });
+        document.getElementById('deleteRoleModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteRoleModal();
+        });
+
+        // 新增角色按钮
+        document.querySelector('.toolbar-left .btn')?.addEventListener('click', function() {
+            showToast('新增角色功能开发中...', 'info');
+        });
+
+        // 初始化
+        renderTable();
+        renderPermissionPanel();
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志管理 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+    </style>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-x-ray"></i></div><span class="sidebar-title">D-Site</span></div>
+            <div class="sidebar-menu">
+                <a class="menu-item" href="dashboard.html"><i class="fas fa-th-large"></i><span>仪表盘</span></a>
+                <div class="menu-section">云胶片业务</div>
+                <a class="menu-item" href="patients.html"><i class="fas fa-users"></i><span>患者管理</span></a>
+                <a class="menu-item" href="examinations.html"><i class="fas fa-clipboard-list"></i><span>检查管理</span><span class="badge">5</span></a>
+                <a class="menu-item" href="images.html"><i class="fas fa-images"></i><span>影像管理</span></a>
+                <a class="menu-item" href="image-viewer.html"><i class="fas fa-eye"></i><span>DICOM阅片</span></a>
+                <a class="menu-item" href="reports.html"><i class="fas fa-file-medical"></i><span>诊断报告</span></a>
+                <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
+                <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
+                <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">系统管理</div>
+                <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
+                <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
+                <a class="menu-item" href="depts.html"><i class="fas fa-hospital"></i><span>院区管理</span></a>
+                <a class="menu-item" href="dict.html"><i class="fas fa-book"></i><span>字典管理</span></a>
+                <a class="menu-item active" href="logs.html"><i class="fas fa-history"></i><span>日志管理</span></a>
+                <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left"><div class="breadcrumb"><span>首页</span><i class="fas fa-chevron-right" style="font-size: 10px;"></i><span>日志管理</span></div></div>
+                <div class="header-right">
+                    <div class="header-icon"><i class="fas fa-bell"></i><span class="count"></span></div>
+                    <div class="header-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="user-dropdown">
+                        <div class="user-info" id="userDropdown">
+                            <div class="user-avatar">A</div>
+                            <div class="user-detail">
+                                <span class="user-name">管理员</span>
+                                <span class="user-role">超级管理员</span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="user-dropdown-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>个人中心</span></div>
+                            <div class="user-dropdown-item" onclick="showToast('修改密码开发中...', 'info')"><i class="fas fa-key"></i><span>修改密码</span></div>
+                            <div class="user-dropdown-divider"></div>
+                            <div class="user-dropdown-item danger" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i><span>退出登录</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="page-header"><h1 class="page-title">日志管理</h1><p class="page-desc">查看系统操作日志</p></div>
+                <div class="filter-tabs"><span class="filter-tab active">操作日志</span><span class="filter-tab">登录日志</span></div>
+                <div class="card">
+                    <div class="table-toolbar">
+                        <div class="toolbar-left">
+                            <button class="btn btn-default"><i class="fas fa-trash"></i> 清空日志</button>
+                            <button class="btn btn-default"><i class="fas fa-download"></i> 导出</button>
+                        </div>
+                        <div class="toolbar-right">
+                            <input type="text" class="input" placeholder="搜索操作人、操作内容..." style="width: 280px;">
+                            <select class="select"><option>全部状态</option><option>正常</option><option>异常</option></select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>操作时间</th><th>操作人</th><th>操作模块</th><th>操作类型</th><th>操作描述</th><th>IP地址</th><th>消耗时间</th><th>状态</th></tr></thead>
+                        <tbody>
+                            <tr><td>2026-03-26 10:35:23</td><td>admin</td><td>患者管理</td><td>新增</td><td>新增患者信息：王建国</td><td>192.168.1.100</td><td>125ms</td><td><span class="status-tag normal">正常</span></td></tr>
+                            <tr><td>2026-03-26 10:32:15</td><td>radiologist</td><td>影像管理</td><td>上传</td><td>上传DICOM影像：EX2026032605</td><td>192.168.1.105</td><td>2.5s</td><td><span class="status-tag normal">正常</span></td></tr>
+                            <tr><td>2026-03-26 10:28:42</td><td>radiologist</td><td>报告管理</td><td>编辑</td><td>编辑诊断报告：EX2026032602</td><td>192.168.1.105</td><td>89ms</td><td><span class="status-tag normal">正常</span></td></tr>
+                            <tr><td>2026-03-26 10:25:08</td><td>clinician</td><td>检查管理</td><td>新增</td><td>创建检查单：EX2026032605</td><td>192.168.1.110</td><td>156ms</td><td><span class="status-tag normal">正常</span></td></tr>
+                            <tr><td>2026-03-26 09:15:33</td><td>admin</td><td>系统管理</td><td>登录</td><td>用户登录系统</td><td>192.168.1.100</td><td>45ms</td><td><span class="status-tag normal">正常</span></td></tr>
+                            <tr style="background: #fff1f0;"><td>2026-03-26 08:45:12</td><td>unknown</td><td>系统管理</td><td>登录</td><td>用户登录失败：密码错误</td><td>10.0.0.1</td><td>23ms</td><td><span class="status-tag" style="background: #fff1f0; color: #cf1322;">异常</span></td></tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span class="pagination-info">共 1,234 条记录</span>
+                        <button class="btn btn-default btn-sm"><i class="fas fa-chevron-left"></i></button>
+                        <button class="btn btn-default btn-sm active">1</button>
+                        <button class="btn btn-default btn-sm">2</button>
+                        <button class="btn btn-default btn-sm">3</button>
+                        <button class="btn btn-default btn-sm"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- 退出确认弹窗 -->
+    <div id="logoutModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--danger-color);"><i class="fas fa-sign-out-alt"></i> 确认退出</h3>
+                <button class="icon-btn" onclick="closeLogoutModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p style="color: var(--text-secondary); margin-bottom: 8px;">确定要退出当前账号吗？</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-default" onclick="closeLogoutModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> 确认退出</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
+        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
+        .toast.warning { background: #fffbe6; border: 1px solid #ffe58f; color: #faad14; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+
+    <script>
+        // 日志数据
+        let logs = [
+            { time: '2026-03-26 10:35:23', user: 'admin', module: '患者管理', type: '新增', desc: '新增患者信息：王建国', ip: '192.168.1.100', duration: '125ms', status: 'normal' },
+            { time: '2026-03-26 10:32:15', user: 'radiologist', module: '影像管理', type: '上传', desc: '上传DICOM影像：EX2026032605', ip: '192.168.1.105', duration: '2.5s', status: 'normal' },
+            { time: '2026-03-26 10:28:42', user: 'radiologist', module: '报告管理', type: '编辑', desc: '编辑诊断报告：EX2026032602', ip: '192.168.1.105', duration: '89ms', status: 'normal' },
+            { time: '2026-03-26 10:25:08', user: 'clinician', module: '检查管理', type: '新增', desc: '创建检查单：EX2026032605', ip: '192.168.1.110', duration: '156ms', status: 'normal' },
+            { time: '2026-03-26 09:15:33', user: 'admin', module: '系统管理', type: '登录', desc: '用户登录系统', ip: '192.168.1.100', duration: '45ms', status: 'normal' },
+            { time: '2026-03-26 08:45:12', user: 'unknown', module: '系统管理', type: '登录', desc: '用户登录失败：密码错误', ip: '10.0.0.1', duration: '23ms', status: 'error' },
+        ];
+
+        let loginLogs = [
+            { time: '2026-03-26 09:15:33', user: 'admin', ip: '192.168.1.100', status: '正常', location: '上海市浦东新区' },
+            { time: '2026-03-26 08:50:21', user: 'radiologist', ip: '192.168.1.105', status: '正常', location: '上海市静安区' },
+            { time: '2026-03-26 08:45:12', user: 'unknown', ip: '10.0.0.1', status: '异常', location: '未知' },
+        ];
+
+        let currentTab = 'operation'; // operation | login
+
+        function renderTable() {
+            const tbody = document.querySelector('.data-table tbody');
+            const data = currentTab === 'operation' ? logs : loginLogs;
+
+            if (currentTab === 'operation') {
+                tbody.innerHTML = data.map(log => `
+                    <tr style="${log.status === 'error' ? 'background: #fff1f0;' : ''}">
+                        <td>${log.time}</td>
+                        <td>${log.user}</td>
+                        <td>${log.module}</td>
+                        <td>${log.type}</td>
+                        <td>${log.desc}</td>
+                        <td>${log.ip}</td>
+                        <td>${log.duration}</td>
+                        <td><span class="status-tag ${log.status === 'normal' ? 'normal' : ''}" style="${log.status === 'error' ? 'background: #fff1f0; color: #cf1322;' : ''}">${log.status === 'normal' ? '正常' : '异常'}</span></td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = data.map(log => `
+                    <tr>
+                        <td>${log.time}</td>
+                        <td>${log.user}</td>
+                        <td>${log.ip}</td>
+                        <td>${log.status === '正常' ? '<span class="status-tag normal">正常</span>' : '<span class="status-tag" style="background: #fff1f0; color: #cf1322;">异常</span>'}</td>
+                        <td>${log.location}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 更新表头
+            const thead = document.querySelector('.data-table thead tr');
+            if (tab === 'operation') {
+                thead.innerHTML = '<th>操作时间</th><th>操作人</th><th>操作模块</th><th>操作类型</th><th>操作描述</th><th>IP地址</th><th>消耗时间</th><th>状态</th>';
+            } else {
+                thead.innerHTML = '<th>登录时间</th><th>登录账号</th><th>IP地址</th><th>状态</th><th>登录地点</th>';
+            }
+
+            renderTable();
+        }
+
+        function searchLogs() {
+            const keyword = document.querySelector('.search-input')?.value?.toLowerCase() || '';
+            const status = document.querySelector('.select')?.value || '全部状态';
+
+            if (!keyword && status === '全部状态') {
+                renderTable();
+                return;
+            }
+
+            let filtered = currentTab === 'operation' ? logs : loginLogs;
+
+            if (keyword) {
+                filtered = filtered.filter(log =>
+                    log.user.toLowerCase().includes(keyword) ||
+                    (log.desc && log.desc.toLowerCase().includes(keyword)) ||
+                    (log.module && log.module.toLowerCase().includes(keyword))
+                );
+            }
+
+            if (status !== '全部状态') {
+                const statusMap = { '正常': 'normal', '异常': 'error' };
+                filtered = filtered.filter(log => {
+                    if (currentTab === 'operation') {
+                        return (status === '正常' && log.status === 'normal') || (status === '异常' && log.status === 'error');
+                    } else {
+                        return (status === '正常' && log.status === '正常') || (status === '异常' && log.status === '异常');
+                    }
+                });
+            }
+
+            const tbody = document.querySelector('.data-table tbody');
+            if (currentTab === 'operation') {
+                tbody.innerHTML = filtered.map(log => `
+                    <tr style="${log.status === 'error' ? 'background: #fff1f0;' : ''}">
+                        <td>${log.time}</td>
+                        <td>${log.user}</td>
+                        <td>${log.module}</td>
+                        <td>${log.type}</td>
+                        <td>${log.desc}</td>
+                        <td>${log.ip}</td>
+                        <td>${log.duration}</td>
+                        <td><span class="status-tag ${log.status === 'normal' ? 'normal' : ''}" style="${log.status === 'error' ? 'background: #fff1f0; color: #cf1322;' : ''}">${log.status === 'normal' ? '正常' : '异常'}</span></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function clearLogs() {
+            if (confirm('确定要清空所有日志吗？此操作不可恢复。')) {
+                if (currentTab === 'operation') {
+                    logs = [];
+                } else {
+                    loginLogs = [];
+                }
+                renderTable();
+                showToast('日志已清空', 'warning');
+            }
+        }
+
+        function exportLogs() {
+            showToast('导出功能开发中...', 'info');
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // Tab切换
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                switchTab(this.textContent === '操作日志' ? 'operation' : 'login');
+            });
+        });
+
+        // 搜索
+        document.querySelector('.search-input')?.addEventListener('input', searchLogs);
+        document.querySelector('.select')?.addEventListener('change', searchLogs);
+
+        // 清空按钮
+        document.querySelectorAll('.btn').forEach(btn => {
+            if (btn.textContent.includes('清空')) btn.addEventListener('click', clearLogs);
+            if (btn.textContent.includes('导出')) btn.addEventListener('click', exportLogs);
+        });
+
+        // 初始化
+        renderTable();
+
+        // 用户下拉菜单
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        userDropdown?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdownMenu.classList.toggle('show');
+        });
+        document.addEventListener('click', function() {
+            userDropdownMenu?.classList.remove('show');
+        });
+
+        // 退出登录
+        function openLogoutModal() {
+            userDropdownMenu?.classList.remove('show');
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        function confirmLogout() {
+            closeLogoutModal();
+            showToast('正在退出...', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 800);
+        }
+    </script>
+</body>
+</html>

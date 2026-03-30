@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>诊断报告 - D-Site 云胶片</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        .filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .filter-tab { padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.3s; background: var(--bg-color); color: var(--text-secondary); }
+        .filter-tab:hover { color: var(--primary-color); }
+        .filter-tab.active { background: var(--primary-color); color: white; }
+        .two-column { display: grid; grid-template-columns: 1fr 420px; gap: 24px; }
+        .report-list { display: flex; flex-direction: column; }
+        .report-item { padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: all 0.3s; }
+        .report-item:hover { background: var(--bg-color); }
+        .report-item.active { background: #e6f7ff; border-left: 3px solid var(--primary-color); }
+        .report-item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .report-item-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .report-item-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text-secondary); }
+        .report-editor { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); position: sticky; top: 84px; }
+        .report-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .patient-info { display: flex; align-items: center; gap: 12px; }
+        .patient-avatar { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
+        .patient-details h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .patient-meta { display: flex; gap: 12px; font-size: 13px; color: var(--text-secondary); }
+        .report-body { padding: 24px; }
+        .report-section { margin-bottom: 20px; }
+        .report-section-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .report-section-title i { color: var(--primary-color); }
+        .report-textarea { width: 100%; min-height: 120px; padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; line-height: 1.8; resize: vertical; outline: none; font-family: inherit; }
+        .report-textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1); }
+        .report-footer { padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; }
+        .report-footer button { flex: 1; }
+        .template-list { background: var(--bg-color); border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+        .template-item { padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.3s; }
+        .template-item:hover { background: white; }
+        .status-tag { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+        .status-tag.pending { background: #fffbe6; color: #ad6800; }
+        .status-tag.draft { background: #e6f7ff; color: #1890ff; }
+        .status-tag.completed { background: #f6ffed; color: #52c41a; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal { background: white; border-radius: 12px; padding: 24px; min-width: 400px; max-width: 500px; }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .modal-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .modal-title i { color: var(--primary-color); }
+        .modal-body { margin-bottom: 20px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; }
+
+        /* Toast */
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
+        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+        .toast.warning { background: #fffbe6; border: 1px solid #ffe58f; color: #fa8c16; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+        .empty-state i { font-size: 64px; color: var(--border-color); margin-bottom: 16px; }
+        .empty-state h3 { font-size: 18px; color: var(--text-primary); margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-x-ray"></i></div><span class="sidebar-title">D-Site</span></div>
+            <div class="sidebar-menu">
+                <a class="menu-item" href="dashboard.html"><i class="fas fa-th-large"></i><span>仪表盘</span></a>
+                <div class="menu-section">云胶片业务</div>
+                <a class="menu-item" href="patients.html"><i class="fas fa-users"></i><span>患者管理</span></a>
+                <a class="menu-item" href="examinations.html"><i class="fas fa-clipboard-list"></i><span>检查管理</span><span class="badge">5</span></a>
+                <a class="menu-item" href="images.html"><i class="fas fa-images"></i><span>影像管理</span></a>
+                <a class="menu-item" href="image-viewer.html"><i class="fas fa-eye"></i><span>DICOM阅片</span></a>
+                <a class="menu-item active" href="reports.html"><i class="fas fa-file-medical"></i><span>诊断报告</span></a>
+                <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
+                <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
+                <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">系统管理</div>
+                <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
+                <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
+                <a class="menu-item" href="depts.html"><i class="fas fa-hospital"></i><span>院区管理</span></a>
+                <a class="menu-item" href="dict.html"><i class="fas fa-book"></i><span>字典管理</span></a>
+                <a class="menu-item" href="logs.html"><i class="fas fa-history"></i><span>日志管理</span></a>
+                <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left"><div class="breadcrumb"><span>首页</span><i class="fas fa-chevron-right" style="font-size: 10px;"></i><span>诊断报告</span></div></div>
+                <div class="header-right">
+                    <div class="header-icon"><i class="fas fa-bell"></i><span class="count"></span></div>
+                    <div class="header-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="user-dropdown">
+                        <div class="user-info" id="userDropdown">
+                            <div class="user-avatar">A</div>
+                            <div class="user-detail">
+                                <span class="user-name">管理员</span>
+                                <span class="user-role">超级管理员</span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="user-dropdown-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>个人中心</span></div>
+                            <div class="user-dropdown-item" onclick="showToast('修改密码开发中...', 'info')"><i class="fas fa-key"></i><span>修改密码</span></div>
+                            <div class="user-dropdown-divider"></div>
+                            <div class="user-dropdown-item danger" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i><span>退出登录</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">诊断报告</h1>
+                    <p class="page-desc">撰写和管理诊断报告</p>
+                </div>
+                <div class="filter-tabs">
+                    <span class="filter-tab active" data-filter="all">全部报告 (89)</span>
+                    <span class="filter-tab" data-filter="pending">待撰写 (12)</span>
+                    <span class="filter-tab" data-filter="draft">草稿 (5)</span>
+                    <span class="filter-tab" data-filter="completed">已完成 (72)</span>
+                </div>
+                <div class="two-column">
+                    <div class="card">
+                        <div class="table-toolbar">
+                            <input type="text" class="input" id="searchReport" placeholder="搜索检查号/患者姓名..." style="width: 280px;">
+                            <button class="btn btn-primary" onclick="searchReports()"><i class="fas fa-search"></i></button>
+                        </div>
+                        <div class="report-list" id="reportList"></div>
+                    </div>
+                    <div class="report-editor" id="reportEditor">
+                        <div id="emptyEditor">
+                            <div class="empty-state">
+                                <i class="fas fa-file-medical"></i>
+                                <h3>选择一份报告</h3>
+                                <p>从左侧列表选择一份检查报告进行编辑</p>
+                            </div>
+                        </div>
+                        <div id="editorContent" style="display: none;">
+                            <div class="report-header">
+                                <div class="patient-info">
+                                    <div class="patient-avatar" id="editorAvatar">陈</div>
+                                    <div class="patient-details">
+                                        <h4 id="editorPatientName">陈明</h4>
+                                        <div class="patient-meta">
+                                            <span id="editorExamId">EX2026032603</span>
+                                            <span id="editorModality">DR (胸部正侧位)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="status-tag draft" id="editorStatus">草稿</span>
+                            </div>
+                            <div class="report-body">
+                                <div class="template-list">
+                                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">快速模板</div>
+                                    <div class="template-item" onclick="applyTemplate('chest_normal')"><i class="fas fa-lungs"></i> 胸部正位片模板</div>
+                                    <div class="template-item" onclick="applyTemplate('abdomen_ct')"><i class="fas fa-stomach"></i> 腹部CT模板</div>
+                                    <div class="template-item" onclick="applyTemplate('brain_mri')"><i class="fas fa-brain"></i> 头颅MRI模板</div>
+                                </div>
+                                <div class="report-section">
+                                    <div class="report-section-title"><i class="fas fa-clipboard"></i> 临床资料</div>
+                                    <textarea class="report-textarea" id="editorClinical" placeholder="请输入临床资料..."></textarea>
+                                </div>
+                                <div class="report-section">
+                                    <div class="report-section-title"><i class="fas fa-search"></i> 检查所见</div>
+                                    <textarea class="report-textarea" id="editorFindings" placeholder="请输入检查所见..."></textarea>
+                                </div>
+                                <div class="report-section">
+                                    <div class="report-section-title"><i class="fas fa-stethoscope"></i> 诊断意见</div>
+                                    <textarea class="report-textarea" id="editorDiagnosis" placeholder="请输入诊断意见..."></textarea>
+                                </div>
+                            </div>
+                            <div class="report-footer">
+                                <button class="btn btn-default" onclick="saveDraft()"><i class="fas fa-save"></i> 保存草稿</button>
+                                <button class="btn btn-success" onclick="submitReport()"><i class="fas fa-check"></i> 提交报告</button>
+                                <button class="btn btn-default" onclick="exportPdf()"><i class="fas fa-file-pdf"></i> 导出PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提交确认弹窗 -->
+    <div id="submitModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="text-align: center;">
+            <div class="modal-header" style="justify-content: center; border: none; padding-bottom: 0;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #f6ffed; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                    <i class="fas fa-check" style="font-size: 32px; color: #52c41a;"></i>
+                </div>
+                <h3 class="modal-title" style="justify-content: center;">确认提交报告</h3>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); font-size: 14px;">报告提交后将无法修改，确定要提交吗？</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-default" onclick="closeModal('submitModal')">取消</button>
+                <button class="btn btn-success" onclick="confirmSubmit()"><i class="fas fa-check"></i> 确认提交</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- 退出确认弹窗 -->
+    <div id="logoutModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--danger-color);"><i class="fas fa-sign-out-alt"></i> 确认退出</h3>
+                <button class="icon-btn" onclick="closeLogoutModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 20px 0;">
+                <div style="width: 64px; height: 64px; background: #fff1f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                    <i class="fas fa-sign-out-alt" style="font-size: 28px; color: var(--danger-color);"></i>
+                </div>
+                <p style="font-size: 16px; color: var(--text-primary); margin-bottom: 8px;">确定要退出登录吗？</p>
+                <p style="font-size: 14px; color: var(--text-secondary);">退出后需要重新输入账号密码登录</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-default" onclick="closeLogoutModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> 确认退出</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        userDropdown?.addEventListener('click', function(e) { e.stopPropagation(); userDropdownMenu.classList.toggle('show'); });
+        document.addEventListener('click', function() { userDropdownMenu?.classList.remove('show'); });
+        userDropdownMenu?.addEventListener('click', function(e) { e.stopPropagation(); });
+        function openLogoutModal() { userDropdownMenu?.classList.remove('show'); document.getElementById('logoutModal').style.display = 'flex'; }
+        function closeLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
+        function confirmLogout() { closeLogoutModal(); showToast('正在退出...', 'info'); setTimeout(() => { window.location.href = 'login.html'; }, 800); }
+
+        // 报告数据
+        let reports = [
+            { id: 'RPT20260301', examId: 'EX2026032603', patient: '陈明', sex: '男', age: 32, modality: 'DR', part: '胸部正侧位', status: 'pending', clinical: '常规体检，无特殊不适。', findings: '', diagnosis: '' },
+            { id: 'RPT20260302', examId: 'EX2026032602', patient: '李娜', sex: '女', age: 45, modality: 'CT', part: '腹部', status: 'completed', clinical: '腹痛待查，腹部超声提示肝右叶占位。', findings: '肝右叶见一类圆形低密度影，大小约3.5cm×4.0cm，边界清楚，增强扫描动脉期边缘轻度强化，静脉期及延迟期强化程度减低。余肝脏未见明显异常密度灶。胆囊不大，壁不厚。脾脏、胰腺、双肾未见明显异常。', diagnosis: '肝右叶囊肿，建议定期复查。' },
+            { id: 'RPT20260303', examId: 'EX2026032601', patient: '张伟', sex: '男', age: 55, modality: 'DR', part: '腰椎', status: 'completed', clinical: '腰痛伴下肢麻木2月余，外院CT提示腰椎间盘突出。', findings: '腰椎生理曲度存在，序列整齐。各椎体边缘可见唇样骨质增生。L4-L5椎间隙稍变窄，L4-L5椎间盘向后方突出，硬膜囊前缘轻度受压。L5-S1椎间盘向后方突出，神经根未见明显受压。椎管形态未见明显狭窄。黄韧带未见增厚。', diagnosis: '1. 腰椎退行性改变\n2. L4-L5椎间盘突出（后中央型）\n3. L5-S1椎间盘突出（后型）' },
+            { id: 'RPT20260304', examId: 'EX2026032520', patient: '王芳', sex: '女', age: 48, modality: 'MRI', part: '头颅', status: 'draft', clinical: '头晕1周。', findings: '两侧大脑半球灰白质分布正常。两侧基底节区可见斑点状长T1长T2信号影，FLAIR呈低信号，边界清楚，直径约3-5mm。脑室系统未见异常，脑沟裂池未见增宽。中线结构居中。', diagnosis: '两侧基底节区腔隙性脑梗死（陈旧性）。' },
+            { id: 'RPT20260305', examId: 'EX2026032519', patient: '赵强', sex: '男', age: 62, modality: 'CT', part: '胸部', status: 'pending', clinical: '咳嗽伴发热3天。', findings: '', diagnosis: '' },
+            { id: 'RPT20260306', examId: 'EX2026032518', patient: '钱琳', sex: '女', age: 35, modality: 'MRI', part: '膝关节', status: 'pending', clinical: '左膝关节疼痛、活动受限2周。', findings: '', diagnosis: '' },
+        ];
+
+        const templates = {
+            chest_normal: { clinical: '常规体检。', findings: '胸廓对称。双肺纹理清晰，走行自然，双肺野透亮度正常。双肺门影不大，位置正常。心脏大小形态正常。纵隔无增宽。双侧膈面光滑，肋膈角锐利。胸廓骨骼未见明显异常。', diagnosis: '胸片未见明显异常。' },
+            abdomen_ct: { clinical: '', findings: '', diagnosis: '' },
+            brain_mri: { clinical: '', findings: '', diagnosis: '' }
+        };
+
+        let currentReport = null;
+        let currentFilter = 'all';
+
+        function getStatusTag(status) {
+            const map = { pending: { text: '待撰写', class: 'pending' }, draft: { text: '草稿', class: 'draft' }, completed: { text: '已完成', class: 'completed' } };
+            const s = map[status] || map.pending;
+            return `<span class="status-tag ${s.class}">${s.text}</span>`;
+        }
+
+        function renderReportList() {
+            let filtered = reports;
+            if (currentFilter !== 'all') {
+                filtered = reports.filter(r => r.status === currentFilter);
+            }
+
+            const list = document.getElementById('reportList');
+            list.innerHTML = filtered.map(r => `
+                <div class="report-item ${currentReport && currentReport.id === r.id ? 'active' : ''}" onclick="selectReport('${r.id}')">
+                    <div class="report-item-header">
+                        <span class="report-item-title">${r.patient} - ${r.modality} (${r.part})</span>
+                        ${getStatusTag(r.status)}
+                    </div>
+                    <div class="report-item-meta">
+                        <span><i class="fas fa-hashtag"></i> ${r.examId}</span>
+                        <span><i class="fas fa-user"></i> ${r.sex} / ${r.age}岁</span>
+                        <span><i class="fas fa-clock"></i> ${r.status === 'pending' ? '待撰写' : r.status === 'draft' ? '草稿' : '已完成'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectReport(id) {
+            currentReport = reports.find(r => r.id === id);
+            if (!currentReport) return;
+
+            document.getElementById('emptyEditor').style.display = 'none';
+            document.getElementById('editorContent').style.display = 'block';
+
+            document.getElementById('editorAvatar').textContent = currentReport.patient.charAt(0);
+            document.getElementById('editorPatientName').textContent = currentReport.patient;
+            document.getElementById('editorExamId').textContent = currentReport.examId;
+            document.getElementById('editorModality').textContent = `${currentReport.modality} (${currentReport.part})`;
+            document.getElementById('editorClinical').value = currentReport.clinical || '';
+            document.getElementById('editorFindings').value = currentReport.findings || '';
+            document.getElementById('editorDiagnosis').value = currentReport.diagnosis || '';
+
+            const statusEl = document.getElementById('editorStatus');
+            statusEl.className = `status-tag ${currentReport.status === 'completed' ? 'completed' : currentReport.status === 'draft' ? 'draft' : 'pending'}`;
+            statusEl.textContent = currentReport.status === 'completed' ? '已完成' : currentReport.status === 'draft' ? '草稿' : '待撰写';
+
+            renderReportList();
+        }
+
+        function applyTemplate(templateName) {
+            const tpl = templates[templateName];
+            if (tpl) {
+                if (!document.getElementById('editorClinical').value.trim()) {
+                    document.getElementById('editorClinical').value = tpl.clinical;
+                }
+                if (!document.getElementById('editorFindings').value.trim()) {
+                    document.getElementById('editorFindings').value = tpl.findings;
+                }
+                if (!document.getElementById('editorDiagnosis').value.trim()) {
+                    document.getElementById('editorDiagnosis').value = tpl.diagnosis;
+                }
+                showToast('模板已应用', 'success');
+            }
+        }
+
+        function saveDraft() {
+            if (!currentReport) return;
+
+            currentReport.clinical = document.getElementById('editorClinical').value;
+            currentReport.findings = document.getElementById('editorFindings').value;
+            currentReport.diagnosis = document.getElementById('editorDiagnosis').value;
+            currentReport.status = 'draft';
+
+            const statusEl = document.getElementById('editorStatus');
+            statusEl.className = 'status-tag draft';
+            statusEl.textContent = '草稿';
+
+            renderReportList();
+            showToast('草稿已保存', 'success');
+        }
+
+        function submitReport() {
+            if (!currentReport) return;
+
+            const findings = document.getElementById('editorFindings').value.trim();
+            const diagnosis = document.getElementById('editorDiagnosis').value.trim();
+
+            if (!findings || !diagnosis) {
+                showToast('请填写完整的检查所见和诊断意见', 'warning');
+                return;
+            }
+
+            document.getElementById('submitModal').style.display = 'flex';
+        }
+
+        function confirmSubmit() {
+            currentReport.clinical = document.getElementById('editorClinical').value;
+            currentReport.findings = document.getElementById('editorFindings').value;
+            currentReport.diagnosis = document.getElementById('editorDiagnosis').value;
+            currentReport.status = 'completed';
+
+            const statusEl = document.getElementById('editorStatus');
+            statusEl.className = 'status-tag completed';
+            statusEl.textContent = '已完成';
+
+            closeModal('submitModal');
+            renderReportList();
+            showToast('报告提交成功', 'success');
+        }
+
+        function exportPdf() {
+            if (!currentReport) return;
+            showToast('PDF导出功能开发中...', 'success');
+        }
+
+        function searchReports() {
+            const keyword = document.getElementById('searchReport').value.trim().toLowerCase();
+            if (keyword) {
+                const filtered = reports.filter(r => r.examId.toLowerCase().includes(keyword) || r.patient.toLowerCase().includes(keyword));
+                const list = document.getElementById('reportList');
+                list.innerHTML = filtered.map(r => `
+                    <div class="report-item ${currentReport && currentReport.id === r.id ? 'active' : ''}" onclick="selectReport('${r.id}')">
+                        <div class="report-item-header">
+                            <span class="report-item-title">${r.patient} - ${r.modality} (${r.part})</span>
+                            ${getStatusTag(r.status)}
+                        </div>
+                        <div class="report-item-meta">
+                            <span><i class="fas fa-hashtag"></i> ${r.examId}</span>
+                            <span><i class="fas fa-user"></i> ${r.sex} / ${r.age}岁</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                renderReportList();
+            }
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // 筛选
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                renderReportList();
+            });
+        });
+
+        // 点击背景关闭弹窗
+        document.getElementById('submitModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal('submitModal');
+        });
+
+        // 初始化
+        renderReportList();
+    </script>
+</body>
+</html>
