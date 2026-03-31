@@ -10,13 +10,13 @@ D-Site V1.0 Cloud Film Management System (云胶片管理系统) - A medical ima
 
 | Layer | Technology |
 |-------|------------|
-| Backend | Java 21 / Spring Boot 3.2.1 / Spring Security / JWT |
-| Data Access | MyBatis Plus 3.5.5 |
+| Backend | Java 21 / Spring Boot 3.2.1 / Spring Security / JWT (jjwt 0.12.3) |
+| Data Access | MyBatis Plus 3.5.5 / Druid connection pool |
 | Database | SQL Server 2019 |
 | DICOM Processing | dcm4che 5.33.0 |
 | PDF Generation | iText 7.2.5 |
-| Storage | MinIO (optional) / Local filesystem |
-| Frontend | Vue 2 / Element UI |
+| Storage | MinIO 8.5.9 (optional) / Local filesystem |
+| Frontend | Vue 2.7.14 / Element UI 2.15.14 / Vuex 3 / Vue Router 3 |
 
 ## Common Commands
 
@@ -26,19 +26,10 @@ D-Site V1.0 Cloud Film Management System (云胶片管理系统) - A medical ima
 cd src
 
 # Build entire project
-mvn clean install
-
-# Build single module with dependencies
-mvn clean install -pl medical-admin -am
-
-# Skip tests during build
 mvn clean install -DskipTests
 
-# Run all tests
-mvn test
-
-# Run a single test class (when tests exist)
-mvn test -pl medical-admin -am -Dtest=CfPatientServiceTest
+# Build single module with all dependencies
+mvn clean install -pl medical-admin -am -DskipTests
 
 # Run application
 cd medical-admin
@@ -48,6 +39,8 @@ mvn spring-boot:run
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
+> **Note:** No test classes exist in the codebase yet. `mvn test` will succeed vacuously.
+
 ### Frontend
 
 ```bash
@@ -56,7 +49,7 @@ cd frontend
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server (runs on port 3000, proxies API to localhost:8080)
 npm run serve
 
 # Build production assets
@@ -70,74 +63,69 @@ npm run lint
 
 | Service | URL |
 |---------|-----|
+| Frontend Dev Server | http://localhost:3000 |
 | Backend API | http://localhost:8080 |
-| Swagger UI | http://localhost:8080/swagger-ui.html |
-| API Docs (ReDoc) | http://localhost:8080/doc.html |
+| API Docs (knife4j) | http://localhost:8080/doc.html |
 | Druid Console | http://localhost:8080/druid (admin/123456) |
 
 ### Database Initialization
 
 ```bash
-# Run init script in SQL Server Management Studio or via sqlcmd
+# Full init (tables + seed data)
 sqlcmd -S localhost -U sa -P Password123! -i src/database/init_db.sql
+
+# Incremental migrations (run in order)
+# src/database/migrations/V1.0.1__patient_information_context.sql
+# src/database/migrations/V1.1.0__image_management_context.sql
+# src/database/migrations/V1.2.0__diagnostic_report_context.sql
+# src/database/migrations/V1.3.0__supporting_contexts.sql
+# src/database/migrations/V1.4.0__migration_verification.sql
 ```
-
-### Database Migrations
-
-Migrations are in `src/database/migrations/` with naming convention `V{version}__{description}.sql`:
-
-| File | Description |
-|------|-------------|
-| `V1.0.1__patient_information_context.sql` | Patient management tables |
-| `V1.1.0__image_management_context.sql` | Image/DICOM management |
-| `V1.2.0__diagnostic_report_context.sql` | Report tables |
-| `V1.3.0__supporting_contexts.sql` | Dictionaries, configs, logs |
-| `V1.4.0__migration_verification.sql` | Data verification |
-
-Run migrations in order or use Flyway/Liquibase for automated migration.
 
 ## Architecture
 
-### Module Dependencies
+### Module Dependency Chain
 
 ```
-medical-admin (Spring Boot entry point; application bootstrap and global controllers)
-  └── medical-system (business controllers and services)
-        └── medical-framework (security, JWT, MyBatis Plus, shared infrastructure)
-              └── medical-common (base domain classes, exceptions, utilities)
+medical-admin       → Spring Boot entry point; auth controllers, DICOM viewer endpoint, static resources
+  └── medical-system  → All business logic: cloudfilm + RBAC system controllers/services
+        └── medical-framework  → Security, JWT, MyBatis Plus config, shared infrastructure
+              └── medical-common  → Base entities, exceptions, AjaxResult, utilities
 ```
-
-Repository layout:
-- `src/` contains the Java/Spring Boot multi-module backend
-- `frontend/` contains the Vue 2 + Element UI frontend app
-- `prototype/` contains static HTML prototypes for UI reference, not the production frontend
 
 ### Package Structure
 
+Both `system/` and `cloudfilm/` live inside the `medical-system` Maven module:
+
 ```
 com.dsite.medical
-├── admin/           # medical-admin: app entry, auth, static resource and viewer controllers
-├── common/          # medical-common: shared domain objects, exceptions, utilities
-├── framework/       # medical-framework: config, security, infrastructure wiring
-├── system/          # medical-system: RBAC management (sys_* tables)
-└── cloudfilm/       # medical-system: cloud film business (cf_* tables)
-    ├── domain/entity/
-    ├── mapper/
-    ├── service/
-    ├── controller/
-    ├── dicom/       # DICOM parsing and processing
-    ├── storage/     # Local/MinIO storage implementations
-    └── report/      # PDF report generation
+├── admin/        # App entry, AuthController, DicomViewerController, StaticResourceController
+├── common/       # AjaxResult, PageQuery, base exceptions, utils
+├── framework/    # SecurityConfig, JwtToken, JwtAuthenticationFilter, WebConfig, MyBatis Plus wiring
+├── system/       # RBAC: SysUser, SysRole, SysDept, SysMenu, SysDict, SysConfig, SysOperLog
+└── cloudfilm/    # Business: patient, examination, image, report, share
+    ├── dicom/    # DicomParser (dcm4che), DicomStorageService
+    ├── storage/  # StorageService interface → LocalStorageService / MinioStorageService
+    └── report/   # PDF generation with iText
 ```
 
-Note: `system/` and `cloudfilm/` packages live in the `medical-system` Maven module, not under `framework/`.
+### Frontend Structure
 
-### Entity Naming Conventions
+```
+frontend/src/
+├── api/          # axios modules: auth.js, patient.js, examination.js, image.js,
+│                 #   report.js, share.js, system.js
+├── store/        # Vuex: modules/auth.js (JWT + user state), modules/app.js (UI state)
+├── router/       # Single flat route file; all routes defined here
+├── views/        # Page components organized by module
+│   ├── cloudfilm/  # patient, examination, image, report, share, viewer
+│   ├── system/     # user, role, dept, dict, log
+│   ├── ai/         # AiAnalysis.vue — AI-assisted diagnosis module
+│   └── statistics/ # Statistics.vue
+└── components/   # Shared components
+```
 
-| Table Prefix | Module | Entity Prefix | Example |
-|--------------|--------|---------------|---------|
-| `sys_` | System management | `Sys` | SysUser, SysRole, SysDept |
-| `cf_` | Cloud film business | `Cf` | CfPatient, CfExamination, CfImage |
+`vue.config.js` proxies `/api`, `/auth`, `/cloudfilm`, `/system`, `/monitor`, `/uploads` to `http://localhost:8080`.
 
 ### Key Business Entities
 
@@ -149,7 +137,7 @@ Note: `system/` and `cloudfilm/` packages live in the `medical-system` Maven mod
 | CfDiagnosisReport | cf_diagnosis_report | Diagnostic reports |
 | CfImageShare | cf_image_share | Share links with access codes |
 
-### Controller Pattern
+### Controller / Service Pattern
 
 ```java
 @Tag(name = "模块名称")
@@ -160,40 +148,30 @@ public class CfPatientController {
     private final ICfPatientService patientService;
 
     @Operation(summary = "列表")
-    @PreAuthorize("@ss.hasPermi('cloudfilm:patient:list')")
     @GetMapping("/list")
-    public PageResult<CfPatient> list(CfPatient query, PageQuery pageQuery) { ... }
+    public AjaxResult list(CfPatient query, PageQuery pageQuery) { ... }
 }
 ```
 
-### Service Pattern
+Services use interface + implementation: `ICfPatientService extends IService<CfPatient>` → `CfPatientServiceImpl`.
 
-Services use interface + implementation:
-- Interface: `ICfPatientService` extends `IService<CfPatient>`
-- Implementation: `CfPatientServiceImpl` with `@Service`
+All API responses use `AjaxResult` (in `medical-common`). `PageQuery` carries pagination parameters via MyBatis Plus's `IPage`.
 
-### User Roles
-
-| Role | Chinese | Permissions |
-|------|---------|-------------|
-| Admin | 管理员 | System admin, user/role/dept management |
-| Radiologist | 放射科医生 | Upload images, view DICOM, write/edit reports, export PDF |
-| Clinician | 临床医生 | Create exam orders, view patient history, view images/reports |
-| Patient | 患者 | View own reports, view own images, create/share image links |
+> **Note:** `@PreAuthorize("@ss.hasPermi('...')")` annotations appear in the codebase but the `PermissionService` (`@ss` bean) is not yet implemented. Permission checks are currently unenforced.
 
 ### ID Generation
 
-Business entities use snowflake IDs with type-specific prefixes:
+Business entities (`cf_*`) use `IdType.INPUT` with snowflake IDs and type-specific prefixes (`P`, `E`, `I`, `R`, `S`). System entities (`sys_*`) use `IdType.AUTO` (database auto-increment).
 
-| Prefix | Entity | Example |
-|--------|--------|---------|
-| `P` | CfPatient | P1928374650123 |
-| `E` | CfExamination | E1928374650124 |
-| `I` | CfImage | I1928374650125 |
-| `R` | CfDiagnosisReport | R1928374650126 |
-| `S` | CfImageShare | S1928374650127 |
+### Examination Status Flow
 
-System entities (SysUser, SysRole, etc.) use `IdType.AUTO` (database auto-increment).
+```
+待检查(PENDING) → 检查中(READING) → 已完成(COMPLETED) → 已出报告(REPORTED)
+```
+
+### Logical Delete
+
+All entities have a `del_flag` field with `@TableLogic` — MyBatis Plus handles soft-delete automatically.
 
 ### Default Test Accounts
 
@@ -202,21 +180,6 @@ System entities (SysUser, SysRole, etc.) use `IdType.AUTO` (database auto-increm
 | admin | admin123 | Super Admin |
 | radiologist | admin123 | Radiologist |
 | clinician | admin123 | Clinician |
-
-### Examination Status Flow
-
-```
-待检查(PENDING) → 检查中(READING) → 已完成(COMPLETED) → 已出报告(REPORTED)
-```
-
-### Permission Naming
-
-Format: `{module}:{entity}:{action}`
-- `cloudfilm:patient:list`
-- `cloudfilm:patient:query`
-- `cloudfilm:patient:add`
-- `cloudfilm:patient:edit`
-- `cloudfilm:patient:remove`
 
 ## Configuration
 
@@ -228,14 +191,10 @@ Key settings in `medical-admin/src/main/resources/application.yml`:
 | `jwt.expire` | 120 | Token expiry (minutes) |
 | `jwt.refresh-expire` | 7d | Refresh token expiry |
 | `storage.local.path` | ./uploads | Local storage path |
-| `minio.enabled` | false | Use MinIO for storage |
+| `minio.enabled` | false | Enable MinIO; falls back to local |
 | `spring.servlet.multipart.max-file-size` | 500MB | Max upload size |
 
-### Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DB_PASSWORD` | Password123! | Database password |
+Environment variable `DB_PASSWORD` (default: `Password123!`) is used for the database connection.
 
 ## API Paths
 
@@ -245,42 +204,9 @@ Key settings in `medical-admin/src/main/resources/application.yml`:
 | System Management | `/system/user`, `/system/role`, `/system/dept`, `/system/menu`, `/system/dict`, `/system/config` |
 | Cloud Film | `/cloudfilm/patient`, `/cloudfilm/examination`, `/cloudfilm/image`, `/cloudfilm/report`, `/cloudfilm/share` |
 
-## Development Notes
-
-- Java 21 is required (uses modern Java features)
-- Primary key generation: Business entities use `IdType.INPUT` with snowflake IDs, system entities use `IdType.AUTO`
-- Logical delete: Entities have `del_flag` field with `@TableLogic` annotation
-- All API responses use `AjaxResult` for single results, `PageResult<T>` for paginated lists
-- Permission checks use `@PreAuthorize("@ss.hasPermi('...')")`
-- Backend code lives under `src/`; frontend application code lives under `frontend/`
-- `prototype/` is a static UI reference and should not be treated as the source of truth for the Vue app
-- No backend test classes were found under `src/**/src/test/` during repository scan, so automated test coverage may be limited or not yet added
-
 ## UI Prototype
 
-High-fidelity prototypes are in `prototype/` for frontend development reference:
-
-```
-prototype/
-├── css/common.css          # Shared styles (CSS variables)
-├── login.html              # Login page
-├── index.html              # Combined prototype (all pages)
-├── pages/
-│   ├── cloudfilm/          # Business module pages
-│   │   ├── dashboard.html, patient.html, examination.html
-│   │   ├── appointment.html, queue.html, image.html
-│   │   ├── viewer.html     # DICOM viewer
-│   │   ├── report.html, report-review.html
-│   │   ├── print.html, share.html
-│   │   └── patient-portal.html  # Mobile patient view
-│   ├── system/              # Admin pages
-│   │   └── user.html, role.html, dept.html, dict.html, log.html
-│   └── extended/            # Extended features
-│       └── ai.html, statistics.html, settings.html
-└── external-viewer.html    # External share access page
-```
-
-Each page is self-contained with shared CSS via `href="../../css/common.css"`.
+Static HTML prototypes in `prototype/` are design references only — not the production frontend. Each `.html` file is self-contained and uses `prototype/css/common.css` for shared styles.
 
 ## Documentation
 
@@ -290,4 +216,3 @@ Each page is self-contained with shared CSS via `href="../../css/common.css"`.
 | `docx/DDD-快速参考指南.md` | DDD patterns quick reference |
 | `docx/DDD-领域驱动设计分析.md` | DDD domain analysis |
 | `diagram/` | PNG architecture diagrams |
-| `prototype/` | UI prototypes (see above) |
