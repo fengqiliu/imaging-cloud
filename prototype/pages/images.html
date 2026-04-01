@@ -10,20 +10,7 @@
         .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
         .page-toolbar { display: flex; gap: 12px; margin-bottom: 16px; }
         .search-row { display: grid; grid-template-columns: 1fr 1fr 1fr 120px; gap: 12px; align-items: flex-end; }
-        .pagination { display: flex; align-items: center; justify-content: flex-end; margin-top: 20px; gap: 8px; padding-top: 16px; border-top: 1px solid var(--border-color); }
-        .pagination-info { color: var(--text-secondary); font-size: 14px; margin-right: auto; }
-        .page-btn { min-width: 32px; height: 32px; padding: 0 8px; border: 1px solid var(--border-color); border-radius: 6px; background: white; color: var(--text-primary); cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; }
-        .page-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
-        .page-btn.active { background: var(--primary-color); border-color: var(--primary-color); color: white; }
 
-        /* Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal { background: white; border-radius: 12px; padding: 24px; min-width: 480px; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
-        .modal-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .modal-title i { color: var(--primary-color); }
-        .modal-body { margin-bottom: 20px; }
-        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border-color); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .form-item { display: flex; flex-direction: column; }
         .form-item.full-width { grid-column: 1 / -1; }
@@ -44,12 +31,6 @@
         .image-thumb-item:hover { background: #e6f7ff; }
         .image-thumb-box { width: 100%; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 8px; }
         .image-thumb-name { font-size: 12px; color: var(--text-secondary); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        /* Toast */
-        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
-        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
-        .toast.error { background: #fff1f0; border: 1px solid #ffccc7; color: #ff4d4f; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         /* Modality Tag */
         .modality-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
@@ -142,15 +123,25 @@
                         <thead><tr><th style="width: 5%;"><input type="checkbox"></th><th>检查号</th><th>患者</th><th>模态</th><th>序列数</th><th>图像数</th><th>文件大小</th><th>上传时间</th><th style="width: 18%;">操作</th></tr></thead>
                         <tbody id="imageTableBody"></tbody>
                     </table>
-                    <div class="pagination">
-                        <span class="pagination-info">共 <span id="totalCount">12586</span> 条记录</span>
-                        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
-                        <button class="page-btn active">1</button>
-                        <button class="page-btn">2</button>
-                        <button class="page-btn">3</button>
-                        <button class="page-btn">...</button>
-                        <button class="page-btn">100</button>
-                        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                    <div class="table-pagination">
+                        <div class="pagination-info">共 <span id="totalCount">12586</span> 条记录，当前第 <span>1</span> / <span>100</span> 页</div>
+                        <div class="pagination-controls">
+                            <select class="select pagination-size">
+                                <option value="10">10条/页</option>
+                                <option value="20" selected>20条/页</option>
+                                <option value="50">50条/页</option>
+                                <option value="100">100条/页</option>
+                            </select>
+                            <div class="pagination-buttons">
+                                <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <button class="page-ellipsis">...</button>
+                                <button class="page-btn">100</button>
+                                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

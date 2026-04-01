@@ -2,6 +2,7 @@ package com.dsite.medical.framework.config;
 
 import com.dsite.medical.framework.security.JwtAuthenticationFilter;
 import com.dsite.medical.framework.security.JwtAuthenticationEntryPoint;
+import com.dsite.medical.framework.security.JwtToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,6 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private final JwtToken jwtToken;
+
+    public SecurityConfig(JwtToken jwtToken) {
+        this.jwtToken = jwtToken;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -29,7 +36,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+        return new JwtAuthenticationFilter(jwtToken);
     }
 
     @Bean

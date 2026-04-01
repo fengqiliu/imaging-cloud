@@ -1,13 +1,18 @@
 package com.dsite.medical.common.core.domain;
 
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 分页查询参数
  */
 @Data
-public class PageQuery {
+public class PageQuery implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** 当前页码 */
     private Integer pageNum = 1;
@@ -24,6 +29,7 @@ public class PageQuery {
     /**
      * 构建MyBatis Plus分页对象
      */
+    @SuppressWarnings("unchecked")
     public <T> Page<T> build() {
         Integer pageNum = this.pageNum;
         Integer pageSize = this.pageSize;
@@ -35,8 +41,10 @@ public class PageQuery {
 
         Page<T> page = new Page<>(pageNum, pageSize);
         if (orderByColumn != null && !orderByColumn.isEmpty()) {
-            String orderBy = orderByColumn + " " + isAsc;
-            page.setOrders(com.baomidou.mybatisplus.core.toolkit.StringUtils.getOrders(orderBy));
+            OrderItem orderItem = new OrderItem();
+            orderItem.setColumn(orderByColumn);
+            orderItem.setAsc("asc".equalsIgnoreCase(isAsc));
+            page.addOrder(orderItem);
         }
         return page;
     }

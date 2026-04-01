@@ -131,7 +131,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
      */
     private List<SysDept> buildDeptTree(List<SysDept> depts) {
         List<SysDept> returnList = new ArrayList<>();
-        List<Long> tempList = depts.stream().map(TreeEntity::getDeptId).collect(Collectors.toList());
+        List<Long> tempList = depts.stream().map(SysDept::getDeptId).collect(Collectors.toList());
         for (SysDept dept : depts) {
             // 不是子节点
             if (!tempList.contains(dept.getParentId())) {
@@ -165,8 +165,8 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     private List<SysDept> getChildList(List<SysDept> list, SysDept t) {
         List<SysDept> tlist = new ArrayList<>();
         Iterator<SysDept> it = list.iterator();
-        while()) {
-            SysDept n = it (it.hasNext.next();
+        while (it.hasNext()) {
+            SysDept n = it.next();
             if (n.getParentId() != null && n.getParentId().longValue() == t.getDeptId().longValue()) {
                 tlist.add(n);
             }

@@ -75,6 +75,6 @@ public class SysUserController {
     @PreAuthorize("@ss.hasPermi('system:user:edit')")
     @PutMapping("/authRole")
     public AjaxResult authRole(@RequestBody SysUser user) {
-        return AjaxResult.success(userService.insertUserAuth(user.getUserId(), user.getRoleIds()) > 0);
+        return AjaxResult.success(userService.insertUserAuth(user.getUserId(), user.getRoleIds().toArray(new Long[0])) > 0);
     }
 }

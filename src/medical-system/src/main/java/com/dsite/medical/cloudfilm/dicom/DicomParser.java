@@ -26,7 +26,6 @@ public class DicomParser {
         try (InputStream is = file.getInputStream();
              DicomInputStream dis = new DicomInputStream(is)) {
 
-            dis.open();
             Attributes attrs = dis.readFileMetaInformation();
             if (attrs == null) {
                 attrs = new Attributes();
@@ -74,7 +73,6 @@ public class DicomParser {
     public DicomInfo parse(InputStream inputStream) {
         try (DicomInputStream dis = new DicomInputStream(inputStream)) {
 
-            dis.open();
             Attributes attrs = dis.readFileMetaInformation();
             if (attrs == null) {
                 attrs = new Attributes();

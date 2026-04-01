@@ -27,4 +27,9 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * 删除角色菜单关联
      */
     int deleteRoleMenu(@Param("roleId") Long roleId);
+
+    /**
+     * 查询用户关联的角色列表
+     */
+    List<SysRole> selectRolesByUserId(@Param("userId") Long userId);
 }

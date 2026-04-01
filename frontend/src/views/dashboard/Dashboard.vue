@@ -77,11 +77,7 @@
             <el-option label="近3个月" value="90" />
           </el-select>
         </div>
-        <div class="chart-area">
-          <i class="fas fa-chart-area"></i>
-          <span>图表区域</span>
-          <p>对接后端统计接口显示趋势图</p>
-        </div>
+        <div ref="examTrendChart" class="chart-container"></div>
       </div>
 
       <div class="card chart-card">
@@ -144,12 +140,14 @@
 <script>
 import { mapState } from 'vuex'
 import { getExaminationList } from '@/api/examination'
+import * as echarts from 'echarts'
 
 export default {
   name: 'Dashboard',
   data() {
     return {
       chartRange: '7',
+      examTrendChart: null,
       stats: {
         patientCount: 1286,
         todayExams: 89,
@@ -185,7 +183,158 @@ export default {
   async created() {
     await this.loadRecentExams()
   },
+  mounted() {
+    this.initExamTrendChart()
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy() {
+    if (this.examTrendChart) {
+      this.examTrendChart.dispose()
+    }
+    window.removeEventListener('resize', this.handleResize)
+  },
+  watch: {
+    chartRange() {
+      this.updateExamTrendChart()
+    }
+  },
   methods: {
+    initExamTrendChart() {
+      if (!this.$refs.examTrendChart) return
+
+      this.examTrendChart = echarts.init(this.$refs.examTrendChart)
+      this.updateExamTrendChart()
+    },
+    updateExamTrendChart() {
+      if (!this.examTrendChart) return
+
+      const chartData = this.getChartData()
+
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            }
+          }
+        },
+        legend: {
+          data: ['检查数量', '增长率'],
+          top: 10
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: chartData.dates,
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '检查数量',
+            axisLabel: {
+              formatter: '{value}'
+            }
+          },
+          {
+            type: 'value',
+            name: '增长率',
+            axisLabel: {
+              formatter: '{value}%'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '检查数量',
+            type: 'bar',
+            data: chartData.examCounts,
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#83bff6' },
+                { offset: 0.5, color: '#188df0' },
+                { offset: 1, color: '#188df0' }
+              ])
+            },
+            emphasis: {
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: '#2378f7' },
+                  { offset: 0.7, color: '#2378f7' },
+                  { offset: 1, color: '#83bff6' }
+                ])
+              }
+            }
+          },
+          {
+            name: '增长率',
+            type: 'line',
+            yAxisIndex: 1,
+            data: chartData.growthRates,
+            smooth: true,
+            itemStyle: {
+              color: '#52c41a'
+            },
+            lineStyle: {
+              width: 3
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(82, 196, 26, 0.3)' },
+                { offset: 1, color: 'rgba(82, 196, 26, 0.05)' }
+              ])
+            }
+          }
+        ]
+      }
+
+      this.examTrendChart.setOption(option)
+    },
+    getChartData() {
+      const days = parseInt(this.chartRange)
+      const dates = []
+      const examCounts = []
+      const growthRates = []
+
+      for (let i = days - 1; i >= 0; i--) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        dates.push(`${date.getMonth() + 1}/${date.getDate()}`)
+
+        // 模拟数据：基础值 + 随机波动
+        const baseCount = 80
+        const randomFactor = Math.random() * 40 - 20
+        const count = Math.round(baseCount + randomFactor + (days - i) * 2)
+        examCounts.push(count)
+
+        // 计算增长率
+        if (i === days - 1) {
+          growthRates.push(0)
+        } else {
+          const prevCount = examCounts[examCounts.length - 2]
+          const growth = ((count - prevCount) / prevCount * 100).toFixed(1)
+          growthRates.push(parseFloat(growth))
+        }
+      }
+
+      return { dates, examCounts, growthRates }
+    },
+    handleResize() {
+      if (this.examTrendChart) {
+        this.examTrendChart.resize()
+      }
+    },
     async loadRecentExams() {
       this.loading = true
       try {
@@ -366,6 +515,12 @@ export default {
 
 .chart-card {
   min-height: 300px;
+}
+
+.chart-container {
+  width: 100%;
+  height: 280px;
+  margin-top: 16px;
 }
 
 .chart-area {

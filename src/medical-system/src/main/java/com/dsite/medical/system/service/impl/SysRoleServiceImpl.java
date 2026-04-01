@@ -65,7 +65,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
     @Override
     public List<SysRole> selectRolesByUserId(Long userId) {
-        return baseMapper.selectList(null);
+        return baseMapper.selectRolesByUserId(userId);
     }
 
     @Override

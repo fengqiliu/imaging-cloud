@@ -2,7 +2,6 @@ package com.dsite.medical.framework.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -40,11 +39,11 @@ public class JwtToken {
         claims.put("userId", userId);
         claims.put("username", username);
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expire * 60 * 1000))
-                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                .claims(claims)
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expire * 60 * 1000))
+                .signWith(getSecretKey(), Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -52,11 +51,11 @@ public class JwtToken {
      * 解析Token
      */
     public Claims parseToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSecretKey())
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     /**

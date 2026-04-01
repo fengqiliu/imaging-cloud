@@ -83,13 +83,23 @@
                             <tr style="background: #fff1f0;"><td>2026-03-26 08:45:12</td><td>unknown</td><td>系统管理</td><td>登录</td><td>用户登录失败：密码错误</td><td>10.0.0.1</td><td>23ms</td><td><span class="status-tag" style="background: #fff1f0; color: #cf1322;">异常</span></td></tr>
                         </tbody>
                     </table>
-                    <div class="pagination">
-                        <span class="pagination-info">共 1,234 条记录</span>
-                        <button class="btn btn-default btn-sm"><i class="fas fa-chevron-left"></i></button>
-                        <button class="btn btn-default btn-sm active">1</button>
-                        <button class="btn btn-default btn-sm">2</button>
-                        <button class="btn btn-default btn-sm">3</button>
-                        <button class="btn btn-default btn-sm"><i class="fas fa-chevron-right"></i></button>
+                    <div class="table-pagination">
+                        <div class="pagination-info">共 1,234 条记录，当前第 <span>1</span> / <span>50</span> 页</div>
+                        <div class="pagination-controls">
+                            <select class="select pagination-size">
+                                <option value="10">10条/页</option>
+                                <option value="20" selected>20条/页</option>
+                                <option value="50">50条/页</option>
+                                <option value="100">100条/页</option>
+                            </select>
+                            <div class="pagination-buttons">
+                                <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -115,14 +125,6 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
-        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
-        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
-        .toast.warning { background: #fffbe6; border: 1px solid #ffe58f; color: #faad14; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    </style>
 
     <script>
         // 日志数据

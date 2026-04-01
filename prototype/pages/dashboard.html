@@ -17,29 +17,40 @@
             gap: 16px;
         }
         .quick-action {
-            background: var(--bg-color);
-            border-radius: 12px;
-            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: var(--shadow-sm);
         }
-        .quick-action:hover { border-color: var(--primary-color); background: #fff; }
+        .quick-action:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-bg);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
         .quick-action-icon {
-            width: 48px;
-            height: 48px;
-            background: white;
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            background: var(--primary-bg);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 20px;
+            margin: 0 auto 16px;
+            font-size: 22px;
             color: var(--primary-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 12px rgba(79, 110, 247, 0.15);
         }
-        .quick-action-title { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+        .quick-action:hover .quick-action-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: 0 6px 16px rgba(79, 110, 247, 0.35);
+        }
+        .quick-action-title { font-size: 14px; color: var(--text-primary); font-weight: 600; }
         .chart-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -49,24 +60,36 @@
         .todo-item {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border-color);
+            gap: 14px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            transition: all 0.25s;
+            margin-bottom: 4px;
+        }
+        .todo-item:hover {
+            background: var(--primary-bg);
         }
         .todo-item:last-child { border-bottom: none; }
         .todo-checkbox {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border: 2px solid var(--border-color);
             border-radius: 50%;
             cursor: pointer;
             flex-shrink: 0;
-            margin-top: 2px;
+            margin-top: 1px;
+            transition: all 0.25s;
         }
-        .todo-item.completed .todo-checkbox { background: var(--success-color); border-color: var(--success-color); }
+        .todo-item:hover .todo-checkbox {
+            border-color: var(--primary-color);
+        }
+        .todo-item.completed .todo-checkbox {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
         .todo-item.completed .todo-content { text-decoration: line-through; color: var(--text-secondary); }
         .todo-content { flex: 1; }
-        .todo-title { font-size: 14px; color: var(--text-primary); margin-bottom: 4px; }
+        .todo-title { font-size: 14px; color: var(--text-primary); margin-bottom: 4px; font-weight: 500; }
         .todo-meta { font-size: 12px; color: var(--text-secondary); }
 
         /* Animation */
@@ -81,13 +104,6 @@
         .stat-card:nth-child(3) { animation-delay: 0.3s; }
         .stat-card:nth-child(4) { animation-delay: 0.4s; }
 
-        /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal { background: white; border-radius: 12px; padding: 24px; min-width: 400px; max-width: 500px; }
-        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
-        .modal-title { font-size: 18px; font-weight: 600; }
-        .modal-body { margin-bottom: 20px; }
-        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .form-item { display: flex; flex-direction: column; }
         .form-item.full-width { grid-column: 1 / -1; }
@@ -96,12 +112,6 @@
         .form-input { padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; transition: all 0.3s; width: 100%; }
         .form-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1); }
 
-        /* Toast */
-        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
-        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
-        .toast.error { background: #fff1f0; border: 1px solid #ffccc7; color: #ff4d4f; }
-        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -122,6 +132,8 @@
                 <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
                 <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
                 <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">打印管理</div>
+                <a class="menu-item" href="film-print.html"><i class="fas fa-print"></i><span>胶片打印</span></a>
                 <div class="menu-section">系统管理</div>
                 <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
                 <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>

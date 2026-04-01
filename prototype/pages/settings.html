@@ -25,6 +25,8 @@
                 <a class="menu-item" href="ai.html"><i class="fas fa-robot"></i><span>AI解读</span><span class="badge" style="background: #722ed1;">NEW</span></a>
                 <a class="menu-item" href="share.html"><i class="fas fa-share-alt"></i><span>分享管理</span></a>
                 <a class="menu-item" href="statistics.html"><i class="fas fa-chart-bar"></i><span>运营统计</span></a>
+                <div class="menu-section">打印管理</div>
+                <a class="menu-item" href="film-print.html"><i class="fas fa-print"></i><span>胶片打印</span></a>
                 <div class="menu-section">系统管理</div>
                 <a class="menu-item" href="users.html"><i class="fas fa-user-cog"></i><span>用户管理</span></a>
                 <a class="menu-item" href="roles.html"><i class="fas fa-theater-masks"></i><span>角色管理</span></a>
@@ -62,22 +64,195 @@
                 <div class="page-header"><h1 class="page-title">系统设置</h1><p class="page-desc">配置系统参数和选项</p></div>
                 <div class="card">
                     <div class="card-header"><div class="card-title"><i class="fas fa-cog"></i> 基本设置</div></div>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
                         <div class="form-item"><label class="form-label">系统名称</label><input type="text" class="input" value="D-Site 云胶片管理系统"></div>
                         <div class="form-item"><label class="form-label">当前版本</label><input type="text" class="input" value="V1.0.0" readonly></div>
+                        <div class="form-item"><label class="form-label">系统Logo</label><div style="display: flex; align-items: center; gap: 8px;"><button class="btn btn-default btn-sm"><i class="fas fa-upload"></i> 上传Logo</button></div></div>
                         <div class="form-item"><label class="form-label">默认院区</label><select class="select"><option>总院</option><option>分院</option></select></div>
+                        <div class="form-item"><label class="form-label">默认语言</label><select class="select"><option selected>简体中文</option><option>English</option><option>繁体中文</option></select></div>
+                        <div class="form-item"><label class="form-label">时区设置</label><select class="select"><option selected>Asia/Shanghai (GMT+8)</option><option>America/New_York</option><option>Europe/London</option></select></div>
+                        <div class="form-item"><label class="form-label">日期格式</label><select class="select"><option selected>YYYY-MM-DD</option><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option></select></div>
+                        <div class="form-item"><label class="form-label">时间格式</label><select class="select"><option selected>24小时制</option><option>12小时制</option></select></div>
                         <div class="form-item"><label class="form-label">Token有效期</label><select class="select"><option>2小时</option><option selected>24小时</option><option>7天</option></select></div>
+                        <div class="form-item"><label class="form-label">刷新Token有效期</label><select class="select"><option>7天</option><option selected>30天</option><option>90天</option></select></div>
+                        <div class="form-item"><label class="form-label">每页显示条数</label><select class="select"><option>10条</option><option selected>20条</option><option>50条</option><option>100条</option></select></div>
+                        <div class="form-item"><label class="form-label">启用维护模式</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">维护期间禁止访问</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">启用注册功能</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">允许新用户注册</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">版权信息</label><input type="text" class="input" value="© 2024 D-Site Medical. All Rights Reserved."></div>
                     </div>
-                    <div style="margin-top: 20px; display: flex; justify-content: flex-end;"><button class="btn btn-primary"><i class="fas fa-save"></i> 保存设置</button></div>
                 </div>
                 <div class="card">
                     <div class="card-header"><div class="card-title"><i class="fas fa-database"></i> 存储设置</div></div>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
-                        <div class="form-item"><label class="form-label">存储方式</label><select class="select"><option selected>本地存储</option><option>MinIO对象存储</option></select></div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div class="form-item"><label class="form-label">存储方式</label><select class="select"><option selected>本地存储</option><option>MinIO对象存储</option><option>阿里云OSS</option><option>腾讯云COS</option></select></div>
                         <div class="form-item"><label class="form-label">本地存储路径</label><input type="text" class="input" value="./uploads"></div>
+                        <div class="form-item"><label class="form-label">存储桶名称</label><input type="text" class="input" value="dsite-medical" placeholder="请输入存储桶名称"></div>
                         <div class="form-item"><label class="form-label">文件大小限制</label><input type="text" class="input" value="500MB"></div>
-                        <div class="form-item"><label class="form-label">允许的文件格式</label><input type="text" class="input" value=".dcm, .dicom, .jpg, .png"></div>
+                        <div class="form-item"><label class="form-label">单次上传大小限制</label><input type="text" class="input" value="100MB"></div>
+                        <div class="form-item"><label class="form-label">允许的文件格式</label><input type="text" class="input" value=".dcm, .dicom, .jpg, .png, .pdf"></div>
+                        <div class="form-item"><label class="form-label">DICOM压缩方式</label><select class="select"><option selected>无损压缩</option><option>有损压缩</option><option>不压缩</option></select></div>
+                        <div class="form-item"><label class="form-label">图像质量</label>
+                            <div style="margin-top: 8px;">
+                                <input type="range" min="50" max="100" value="90" style="width: 180px; vertical-align: middle;">
+                                <span style="color: var(--primary-color); font-weight: 600; margin-left: 12px;">90%</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">缩略图生成</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">自动生成缩略图</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">缩略图尺寸</label><select class="select"><option>128×128</option><option selected>256×256</option><option>512×512</option></select></div>
+                        <div class="form-item"><label class="form-label">自动清理过期文件</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">启用自动清理</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">文件保留天数</label><input type="text" class="input" value="365" placeholder="0表示永不过期"></div>
+                        <div class="form-item"><label class="form-label">CD/DVD导出</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">支持光盘导出</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">存储空间预警</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">低于10%时告警</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">备份策略</label><select class="select"><option selected>每日备份</option><option>每周备份</option><option>实时同步</option><option>手动备份</option></select></div>
                     </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-title"><i class="fas fa-shield-alt"></i> 安全设置</div></div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div class="form-item"><label class="form-label">密码复杂度</label><select class="select"><option>简单</option><option selected>中等</option><option>复杂</option></select></div>
+                        <div class="form-item"><label class="form-label">密码有效期</label><select class="select"><option>90天</option><option selected>180天</option><option>365天</option><option>永不过期</option></select></div>
+                        <div class="form-item"><label class="form-label">登录失败锁定</label><select class="select"><option>5次</option><option selected>10次</option><option>15次</option></select></div>
+                        <div class="form-item"><label class="form-label">会话超时</label><select class="select"><option>30分钟</option><option selected>1小时</option><option>2小时</option></select></div>
+                        <div class="form-item"><label class="form-label">双因素认证</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">启用双因素认证</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">IP白名单</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">启用IP访问限制</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-title"><i class="fas fa-bell"></i> 通知设置</div></div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div class="form-item"><label class="form-label">短信通知</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">启用短信提醒</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">邮件通知</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">启用邮件提醒</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">检查完成通知</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">检查完成时通知患者</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">报告审核通知</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">报告审核完成时通知医生</span>
+                            </div>
+                        </div>
+                        <div class="form-item" style="grid-column: span 2;"><label class="form-label">通知时段</label>
+                            <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
+                                <input type="time" class="input" value="08:00" style="width: 150px;">
+                                <span style="color: var(--text-secondary);">至</span>
+                                <input type="time" class="input" value="22:00" style="width: 150px;">
+                                <span style="color: var(--text-secondary); font-size: 13px;">(通知将在此时段内发送)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-title"><i class="fas fa-envelope"></i> 邮件设置</div></div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div class="form-item"><label class="form-label">SMTP服务器</label><input type="text" class="input" value="smtp.exmail.qq.com" placeholder="请输入SMTP服务器地址"></div>
+                        <div class="form-item"><label class="form-label">SMTP端口</label><input type="text" class="input" value="465" placeholder="请输入SMTP端口"></div>
+                        <div class="form-item"><label class="form-label">邮箱账号</label><input type="text" class="input" value="noreply@dsite.com" placeholder="请输入邮箱账号"></div>
+                        <div class="form-item"><label class="form-label">邮箱密码</label><input type="password" class="input" value="********" placeholder="请输入邮箱密码"></div>
+                        <div class="form-item"><label class="form-label">启用SSL</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">使用SSL加密连接</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">发送者名称</label><input type="text" class="input" value="D-Site 云胶片系统" placeholder="请输入发送者显示名称"></div>
+                        <div class="form-item" style="grid-column: span 2;"><label class="form-label">测试邮箱</label><input type="text" class="input" placeholder="请输入测试收件箱地址"><button class="btn btn-default" style="margin-left: 12px;"><i class="fas fa-paper-plane"></i> 发送测试邮件</button></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-title"><i class="fas fa-robot"></i> AI设置</div></div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div class="form-item"><label class="form-label">AI分析引擎</label><select class="select"><option selected>D-Site AI</option><option>第三方API</option><option>自建模型</option></select></div>
+                        <div class="form-item"><label class="form-label">API密钥</label><input type="password" class="input" value="sk-xxxxxxxxxxxxxxxx" placeholder="请输入API密钥"></div>
+                        <div class="form-item"><label class="form-label">启用AI辅助诊断</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">自动分析影像并生成建议</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">AI肺部分析</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">启用肺部AI分析模块</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">AI骨龄分析</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">启用骨龄AI分析模块</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">AI报告自动生成</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <label class="switch"><input type="checkbox"><span class="switch-slider"></span></label>
+                                <span style="color: var(--text-secondary); font-size: 13px;">基于AI分析结果自动生成报告</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">AI置信度阈值</label>
+                            <div style="margin-top: 8px;">
+                                <input type="range" min="50" max="95" value="80" style="width: 200px; vertical-align: middle;">
+                                <span style="color: var(--primary-color); font-weight: 600; margin-left: 12px;">80%</span>
+                                <span style="color: var(--text-secondary); font-size: 13px; margin-left: 4px;">(低于此值将标记需人工复核)</span>
+                            </div>
+                        </div>
+                        <div class="form-item"><label class="form-label">每日API调用限额</label><input type="text" class="input" value="1000" placeholder="请输入每日调用限额"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
+                    <button class="btn btn-default"><i class="fas fa-undo"></i> 恢复默认</button>
+                    <button class="btn btn-primary"><i class="fas fa-save"></i> 保存全部设置</button>
                 </div>
             </div>
         </div>
@@ -104,10 +279,12 @@
     </div>
 
     <style>
-        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
-        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
-        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .switch { position: relative; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dcdfe6; transition: 0.3s; border-radius: 24px; }
+        .switch-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+        .switch input:checked + .switch-slider { background-color: var(--primary-color); }
+        .switch input:checked + .switch-slider:before { transform: translateX(20px); }
     </style>
 
     <script>

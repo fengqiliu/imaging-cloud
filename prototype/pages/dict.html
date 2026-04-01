@@ -54,6 +54,10 @@
                             <div class="dict-type-item"><span>影像模态</span><span class="badge">12</span></div>
                             <div class="dict-type-item"><span>性别</span><span class="badge">2</span></div>
                             <div class="dict-type-item"><span>报告状态</span><span class="badge">3</span></div>
+                            <div class="dict-type-item"><span>检查部位</span><span class="badge">0</span></div>
+                            <div class="dict-type-item"><span>设备厂商</span><span class="badge">0</span></div>
+                            <div class="dict-type-item"><span>申请科室</span><span class="badge">0</span></div>
+                            <div class="dict-type-item"><span>胶片规格</span><span class="badge">0</span></div>
                         </div>
                     </div>
                     <div class="card">
@@ -122,6 +126,10 @@
                             <option value="3">影像模态</option>
                             <option value="4">性别</option>
                             <option value="5">报告状态</option>
+                            <option value="6">检查部位</option>
+                            <option value="7">设备厂商</option>
+                            <option value="8">申请科室</option>
+                            <option value="9">胶片规格</option>
                         </select>
                     </div>
                     <div class="form-item">
@@ -286,83 +294,12 @@
     <div id="toast" class="toast" style="display: none;"></div>
 
     <style>
-        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 2000; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; }
-        .toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
-        .toast.info { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
-        .toast.warning { background: #fffbe6; border: 1px solid #ffe58f; color: #faad14; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .switch { position: relative; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dcdfe6; transition: 0.3s; border-radius: 24px; }
         .switch-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
         .switch input:checked + .switch-slider { background-color: var(--primary-color); }
         .switch input:checked + .switch-slider:before { transform: translateX(20px); }
-
-        /* Pagination Styles */
-        .table-pagination {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 0 0;
-            border-top: 1px solid var(--border-color);
-            margin-top: 16px;
-        }
-        .pagination-info {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .pagination-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .pagination-size {
-            width: auto;
-            min-width: 90px;
-        }
-        .pagination-buttons {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .page-btn {
-            min-width: 32px;
-            height: 32px;
-            padding: 0 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: white;
-            color: var(--text-regular);
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .page-btn:hover:not(:disabled) {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-        .page-btn.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .page-numbers {
-            display: flex;
-            gap: 4px;
-            max-width: 200px;
-            overflow: hidden;
-        }
-        .page-ellipsis {
-            padding: 0 4px;
-            color: var(--text-secondary);
-        }
     </style>
 
     <script>
@@ -373,6 +310,10 @@
             { id: 3, name: '影像模态', count: 12 },
             { id: 4, name: '性别', count: 2 },
             { id: 5, name: '报告状态', count: 3 },
+            { id: 6, name: '检查部位', count: 8 },
+            { id: 7, name: '设备厂商', count: 7 },
+            { id: 8, name: '申请科室', count: 9 },
+            { id: 9, name: '胶片规格', count: 7 },
         ];
 
         // 当前选中的字典类型
@@ -426,6 +367,45 @@
                 { label: '待撰写', value: 'pending', sort: 1, style: 'warning', isDefault: true, status: 'normal' },
                 { label: '已提交', value: 'submitted', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
                 { label: '已审核', value: 'approved', sort: 3, style: 'success', isDefault: false, status: 'normal' },
+            ],
+            6: [ // 检查部位
+                { label: '头部', value: 'HEAD', sort: 1, style: 'primary', isDefault: true, status: 'normal' },
+                { label: '胸部', value: 'CHEST', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '腹部', value: 'ABDOMEN', sort: 3, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '盆腔', value: 'PELVIS', sort: 4, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '脊柱', value: 'SPINE', sort: 5, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '四肢', value: 'LIMBS', sort: 6, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '颈部', value: 'NECK', sort: 7, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '心脏', value: 'HEART', sort: 8, style: 'danger', isDefault: false, status: 'normal' },
+            ],
+            7: [ // 设备厂商
+                { label: 'GE医疗', value: 'GE', sort: 1, style: 'primary', isDefault: true, status: 'normal' },
+                { label: '西门子', value: 'SIEMENS', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '飞利浦', value: 'PHILIPS', sort: 3, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '联影医疗', value: 'UNITED_IMAGING', sort: 4, style: 'success', isDefault: false, status: 'normal' },
+                { label: '东软医疗', value: 'NEUSOFT', sort: 5, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '佳能医疗', value: 'CANON', sort: 6, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '日立医疗', value: 'HITACHI', sort: 7, style: 'primary', isDefault: false, status: 'normal' },
+            ],
+            8: [ // 申请科室
+                { label: '放射科', value: 'RADIOLOGY', sort: 1, style: 'primary', isDefault: true, status: 'normal' },
+                { label: '内科', value: 'INTERNAL', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '外科', value: 'SURGERY', sort: 3, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '急诊科', value: 'EMERGENCY', sort: 4, style: 'danger', isDefault: false, status: 'normal' },
+                { label: '肿瘤科', value: 'ONCOLOGY', sort: 5, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '骨科', value: 'ORTHOPEDICS', sort: 6, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '神经科', value: 'NEUROLOGY', sort: 7, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '儿科', value: 'PEDIATRICS', sort: 8, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '妇产科', value: 'OBSTETRICS', sort: 9, style: 'primary', isDefault: false, status: 'normal' },
+            ],
+            9: [ // 胶片规格
+                { label: '14×17英寸', value: '14X17', sort: 1, style: 'primary', isDefault: true, status: 'normal' },
+                { label: '11×14英寸', value: '11X14', sort: 2, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '10×12英寸', value: '10X12', sort: 3, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '8×10英寸', value: '8X10', sort: 4, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'A3', value: 'A3', sort: 5, style: 'primary', isDefault: false, status: 'normal' },
+                { label: 'A4', value: 'A4', sort: 6, style: 'primary', isDefault: false, status: 'normal' },
+                { label: '4×5英寸', value: '4X5', sort: 7, style: 'primary', isDefault: false, status: 'normal' },
             ],
         };
 

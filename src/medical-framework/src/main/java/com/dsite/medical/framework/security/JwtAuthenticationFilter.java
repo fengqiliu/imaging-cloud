@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * JWT认证过滤器
@@ -23,6 +26,9 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtToken jwtToken;
+
+    @Autowired(required = false)
+    private IUserDetailsService userDetailsService;
 
     public JwtAuthenticationFilter(JwtToken jwtToken) {
         this.jwtToken = jwtToken;
@@ -41,9 +47,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             loginUser.setUserId(userId);
             loginUser.setUsername(username);
 
+            // 获取用户角色
+            List<SimpleGrantedAuthority> authorities;
+            if (userDetailsService != null) {
+                // 从数据库加载用户角色
+                List<String> roles = userDetailsService.getUserRoles(userId);
+                authorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority(role.startsWith("ROLE_") ? role : "ROLE_" + role))
+                        .collect(Collectors.toList());
+            } else {
+                // 降级处理：如果服务未实现，使用默认角色
+                authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            }
+
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(loginUser, null,
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+                    new UsernamePasswordAuthenticationToken(loginUser, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
