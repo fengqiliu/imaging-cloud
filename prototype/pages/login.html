@@ -310,6 +310,9 @@
                 loginSubmit.classList.remove('loading');
                 loginSubmit.innerHTML = '<i class="fas fa-sign-in-alt"></i> 登 录';
                 showToast('登录成功，正在进入系统...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 500);
             }, 900);
         });
     </script>

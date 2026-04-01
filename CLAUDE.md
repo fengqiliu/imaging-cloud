@@ -46,7 +46,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```bash
 cd frontend
 
-# Install dependencies
+# Install dependencies (package-lock.json is gitignored)
 npm install
 
 # Start development server (runs on port 3000, proxies API to localhost:8080)
@@ -207,6 +207,8 @@ Environment variable `DB_PASSWORD` (default: `Password123!`) is used for the dat
 ## UI Prototype
 
 Static HTML prototypes in `prototype/` are design references only — not the production frontend. Each `.html` file is self-contained and uses `prototype/css/common.css` for shared styles.
+
+Visual style: modern with subtle gradients, glassmorphism headers (`backdrop-filter: blur`), and multi-level animations. See `prototype/UI-UX-DESIGN-GUIDE.md` (V2.0) for detailed design specifications.
 
 ## Documentation
 
