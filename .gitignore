@@ -83,3 +83,7 @@ Thumbs.db
 *.key
 *.p12
 *.jks
+
+# NPM
+node_modules/
+package-lock.json
