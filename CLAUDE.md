@@ -16,7 +16,7 @@ D-Site V1.0 Cloud Film Management System (云胶片管理系统) - A medical ima
 | DICOM Processing | dcm4che 5.33.0 |
 | PDF Generation | iText 7.2.5 |
 | Storage | MinIO 8.5.9 (optional) / Local filesystem |
-| Frontend | Vue 2.7.14 / Element UI 2.15.14 / Vuex 3 / Vue Router 3 |
+| Frontend | Vue 2.7.14 (EOL) / Element UI 2.15.14 / Vuex 3 / Vue Router 3 |
 
 ## Common Commands
 
@@ -65,7 +65,7 @@ npm run lint
 |---------|-----|
 | Frontend Dev Server | http://localhost:3000 |
 | Backend API | http://localhost:8080 |
-| API Docs (knife4j) | http://localhost:8080/doc.html |
+| API Docs (knife4j UI) | http://localhost:8080/doc.html |
 | Druid Console | http://localhost:8080/druid (admin/123456) |
 
 ### Database Initialization
@@ -113,8 +113,14 @@ com.dsite.medical
 
 ```
 frontend/src/
-├── api/          # axios modules: auth.js, patient.js, examination.js, image.js,
-│                 #   report.js, share.js, system.js
+├── api/          # axios modules
+│   ├── auth.js         # 登录/登出/刷新令牌
+│   ├── patient.js      # 患者 CRUD
+│   ├── examination.js  # 检查订单管理
+│   ├── image.js        # 影像文件上传/查询
+│   ├── report.js       # 诊断报告
+│   ├── share.js        # 影像分享
+│   └── system.js       # 系统管理（用户/角色/字典）
 ├── store/        # Vuex: modules/auth.js (JWT + user state), modules/app.js (UI state)
 ├── router/       # Single flat route file; all routes defined here
 ├── views/        # Page components organized by module
@@ -126,6 +132,10 @@ frontend/src/
 ```
 
 `vue.config.js` proxies `/api`, `/auth`, `/cloudfilm`, `/system`, `/monitor`, `/uploads` to `http://localhost:8080`.
+
+### PACS / DICOM Integration
+
+PACS 集成架构见 `docx/PACS-Agent架构设计文档.md`。DICOM 查看器路由在 `/cloudfilm/viewer`。后端 `DicomViewerController` 提供 DICOM 文件访问。
 
 ### Key Business Entities
 
